@@ -1,0 +1,22 @@
+const questions = [
+    ["das Kino","le cinéma"],
+    ["die Spinne","une araignée"],
+    ["der Feind","un ennemi"],
+    ["flink","agile"],
+    ["zuverlässig","fiable"],
+    ["der Ritter","le chevalier"],
+    ["mutig","courageux"],
+    ["der Mut","le courage"],
+    ["ehrlich","honnête"],
+    ["grausam","cruel"],
+    ["böse","méchant"],
+    ["die Hexe","la sorcière"],
+    ["eifersüchtig","jaloux"],
+    ["der Vampir","le vampire"],
+    ["unsterblich","immortel"],
+    ["ehrgeizig","ambitieux"],
+    ["der Held","le héros"],
+    ["riesig","géant"],
+    ["schön","beau"],
+    ["gewalttätig","violent"]
+];
