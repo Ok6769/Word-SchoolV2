@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dis Donc! - Karten</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container wide-mode" id="gameContainer">
+    <h1>🃏 Paare finden</h1>
+    <div class="subtitle">Verbinde die passenden deutschen und französischen Begriffe!</div>
+
+    <div class="cards-grid" id="cardGrid"></div>
+
+    <div id="winMessage" style="display:none; margin-bottom: 20px;">
+        <h2>🎉 Отличный результат! Все пары найдены!</h2>
+        <button class="restart-btn" onclick="generateCards()">Nochmal spielen 🔄</button>
+    </div>
+
+    <a class="restart-btn" style="background: #666; margin-top:0;" href="index.html">↩ Zum Hauptmenü</a>
+</div>
+
+<script src="questions.js"></script>
+<script>
+let firstSelected = null;
+let secondSelected = null;
+let matchesFound = 0;
+
+// Автозапуск генерации карт
+generateCards();
+
+function generateCards() {
+    const grid = document.getElementById("cardGrid");
+    const winMsg = document.getElementById("winMessage");
+    grid.innerHTML = "";
+    winMsg.style.display = "none";
+    matchesFound = 0;
+    firstSelected = null;
+    secondSelected = null;
+
+    const shuffledPairs = [...questions].sort(() => Math.random() - 0.5);
+    const selectedPairs = shuffledPairs.slice(0, 6);
+
+    let cardItems = [];
+    selectedPairs.forEach((pair, index) => {
+        cardItems.push({ text: pair[0], pairId: index }); 
+        cardItems.push({ text: pair[1], pairId: index }); 
+    });
+
+    cardItems.sort(() => Math.random() - 0.5);
+
+    cardItems.forEach(item => {
+        const cardElement = document.createElement("div");
+        cardElement.className = "card";
+        cardElement.textContent = item.text;
+        cardElement.dataset.pairId = item.pairId;
+
+        cardElement.onclick = () => {
+            if (cardElement.classList.contains('correct') || cardElement === firstSelected) return;
+            if (document.querySelectorAll('.card.wrong').length > 0) return; 
+
+            cardElement.classList.add('selected');
+
+            if (!firstSelected) {
+                firstSelected = cardElement;
+            } else {
+                secondSelected = cardElement;
+                checkCardMatch();
+            }
+        };
+
+        grid.appendChild(cardElement);
+    });
+}
+
+function checkCardMatch() {
+    if (firstSelected.dataset.pairId === secondSelected.dataset.pairId) {
+        firstSelected.classList.remove('selected');
+        secondSelected.classList.remove('selected');
+        firstSelected.classList.add('correct');
+        secondSelected.classList.add('correct');
+        
+        matchesFound++;
+        firstSelected = null;
+        secondSelected = null;
+
+        if (matchesFound === 6) {
+            setTimeout(() => {
+                document.getElementById("winMessage").style.display = "block";
+            }, 500);
+        }
+    } else {
+        firstSelected.classList.add('wrong');
+        secondSelected.classList.add('wrong');
+
+        setTimeout(() => {
+            firstSelected.classList.remove('selected', 'wrong');
+            secondSelected.classList.remove('selected', 'wrong');
+            firstSelected = null;
+            secondSelected = null;
+        }, 600);
+    }
+}
+</script>
+</body>
+</html>
