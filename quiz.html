@@ -6,7 +6,6 @@
     <title>Dis Donc! - Quiz</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Глубокий профессиональный фон с градиентными бликами */
         body {
             display: flex;
             justify-content: center;
@@ -57,18 +56,6 @@
         .input-container {
             margin: 20px 0;
         }
-
-        /* Стильные минималистичные индикаторы вместо эмодзи */
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 6px;
-            vertical-align: middle;
-        }
-        .status-indicator.success { background-color: #2ecc71; }
-        .status-indicator.error { background-color: #e74c3c; }
     </style>
 </head>
 <body>
@@ -158,14 +145,14 @@ function loadQuestion(){
                 document.querySelectorAll(".answer-btn").forEach(b => b.disabled = true);
                 if(opt === correctAnswers){
                     btn.classList.add("correct");
-                    document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'><span class='status-indicator success'></span>Richtig</span>";
+                    document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>Richtig</span>";
                     score++;
                 } else {
                     btn.classList.add("wrong");
                     document.querySelectorAll(".answer-btn").forEach(b => {
                         if(b.textContent === correctAnswers) b.classList.add("correct");
                     });
-                    document.getElementById("result").innerHTML = "<span style='color: #e74c3c;'><span class='status-indicator error'></span>Falsch</span>";
+                    document.getElementById("result").innerHTML = "<span style='color: #e74c3c;'>Falsch</span>";
                 }
                 document.getElementById("score").textContent = score;
                 current++;
@@ -235,11 +222,11 @@ function loadQuestion(){
 
             if(userAns === correctAns){
                 input.classList.add("correct");
-                document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'><span class='status-indicator success'></span>Richtig</span>";
+                document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>Richtig</span>";
                 score++;
             } else {
                 input.classList.add("wrong");
-                document.getElementById("result").innerHTML = `<span style='color: #e74c3c;'><span class='status-indicator error'></span>Falsch! Richtig: <b>${correctAnswers}</b></span>`;
+                document.getElementById("result").innerHTML = `<span style='color: #e74c3c;'>Falsch! Richtig: <b>${correctAnswers}</b></span>`;
             }
 
             document.getElementById("score").textContent = score;
