@@ -5,39 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dis Donc! - Karten</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Настройка CSS переменных для тем карт */
-        :root {
-            --main-color: #ff8c1a;
-            --main-hover: #e07b13;
-        }
-        body.theme-green {
-            --main-color: #2ecc71;
-            --main-hover: #27ae60;
-        }
-        /* Динамическое окрашивание выбранных карточек */
-        .card.selected {
-            border-color: var(--main-color) !important;
-            color: var(--main-color) !important;
-        }
-        .restart-btn { background-color: var(--main-color) !important; }
-        .restart-btn:hover { background-color: var(--main-hover) !important; }
-    </style>
 </head>
 <body>
 
 <div class="container wide-mode" id="gameContainer">
     <h1>🃏 Paare finden</h1>
-    <div class="subtitle">Verbinde die passenden deutschen und französischen Begriffe!</div>
+    <div class="subtitle">Klicke auf ein deutsches und ein französisches Wort, die zusammenpassen!</div>
 
+    <!-- Сетка для карточек -->
     <div class="cards-grid" id="cardGrid"></div>
 
-    <div id="winMessage" style="display:none; margin-bottom: 20px;">
-        <h2>🎉 Отличный результат! Все пары найдены!</h2>
-        <button class="restart-btn" onclick="generateCards()">Nochmal spielen 🔄</button>
+    <!-- Экран победы (изначально скрыт) -->
+    <div id="winMessage" style="display:none; text-align:center; margin: 30px 0;">
+        <h2 style="color: var(--text-main); margin-bottom: 20px;">🎉 Ausgezeichnet! Alle Paare wurden gefunden!</h2>
+        <div style="display:flex; gap:15px; justify-content:center;">
+            <button class="restart-btn" onclick="generateCards()">Nochmal spielen 🔄</button>
+            <a class="restart-btn" style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%);" href="index.html">Hauptmenü 🏠</a>
+        </div>
     </div>
 
-    <a class="restart-btn" style="background: #666; margin-top:0;" href="index.html">↩ Zum Hauptmenü</a>
+    <!-- Нижняя панель навигации, если игра ещё идет -->
+    <div id="navigationBox" style="margin-top: 30px; text-align: center;">
+        <a class="restart-btn" style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%); padding: 12px 25px; font-size: 14px;" href="index.html">↩ Zum Hauptmenü</a>
+    </div>
 </div>
 
 <script src="questions.js"></script>
@@ -46,64 +36,72 @@ let firstSelected = null;
 let secondSelected = null;
 let matchesFound = 0;
 
-// Автозапуск игры при открытии страницы
+// Запуск генерации игрового поля
 generateCards();
 
 function generateCards() {
     const grid = document.getElementById("cardGrid");
     const winMsg = document.getElementById("winMessage");
+    const navBox = document.getElementById("navigationBox");
+    
+    // Сброс состояния игры
     grid.innerHTML = "";
     winMsg.style.display = "none";
+    navBox.style.display = "block";
     matchesFound = 0;
     firstSelected = null;
     secondSelected = null;
 
-    // 1. Извлекаем выбранные книгу и юнит
+    // 1. Получаем выбранные пользователем настройки
     const chosenBook = localStorage.getItem('selectedBook') || '6';
     const chosenUnit = localStorage.getItem('selectedUnit') || 'all';
 
-    // 2. Включаем зелёный дизайн, если выбрана 5-я книга
+    // 2. Активируем тему оформления на основе книги
     if (chosenBook === '5') {
         document.body.className = 'theme-green';
     } else {
-        document.body.className = '';
+        document.body.className = 'theme-orange';
     }
 
-    // 3. Фильтруем массив слов по книге и юниту
+    // 3. Фильтруем массив слов (Книга -> Юнит)
     let activeQuestions = questions.filter(q => q.book == chosenBook);
     if (chosenUnit !== 'all') {
         activeQuestions = activeQuestions.filter(q => q.unit == chosenUnit);
     }
 
-    // Защита: для построения игрового поля нужно минимум 6 слов в выбранной вкладке
+    // 4. Валидация: проверяем, хватает ли слов для игры
     if (activeQuestions.length < 6) {
         grid.style.display = "block";
         grid.innerHTML = `
-            <p style="color:#e74c3c; text-align:center; font-weight:bold; font-size:18px;">
-                ⚠️ Zu wenige Wörter in dieser Auswahl!
-            </p>
-            <p style="text-align:center; color:#555;">
-                Für dieses Spiel werden mindestens 6 Wörter im Unit benötigt. (Aktuell: ${activeQuestions.length}).
-            </p>
+            <div style="padding: 30px; text-align:center;">
+                <p style="color:#e74c3c; font-weight:bold; font-size:18px; margin-bottom: 10px;">
+                    ⚠️ Zu wenige Wörter in dieser Auswahl!
+                </p>
+                <p style="color: var(--text-muted); font-size: 15px;">
+                    Für dieses Spiel werden mindestens 6 Wörter im Unit benötigt. (Aktuell vorhanden: ${activeQuestions.length}).
+                </p>
+            </div>
         `;
         return;
     } else {
         grid.style.display = "grid";
     }
 
-    // 4. Вытаскиваем 6 случайных пар для раунда
+    // 5. Отбираем 6 случайных слов для текущего раунда
     activeQuestions.sort(() => Math.random() - 0.5);
     const selectedPairs = activeQuestions.slice(0, 6);
 
+    // Разделяем пары на отдельные карточки (6 немецких + 6 французских)
     let cardItems = [];
     selectedPairs.forEach((pair, index) => {
         cardItems.push({ text: pair.de, pairId: index });
         cardItems.push({ text: pair.fr, pairId: index });
     });
 
+    // Перемешиваем карточки, чтобы немецкие и французские слова перепутались
     cardItems.sort(() => Math.random() - 0.5);
 
-    // 5. Отрендерить карточки на экране
+    // 6. Отрисовка карточек на игровом поле
     cardItems.forEach(item => {
         const cardElement = document.createElement("div");
         cardElement.className = "card";
@@ -111,14 +109,19 @@ function generateCards() {
         cardElement.dataset.pairId = item.pairId;
 
         cardElement.onclick = () => {
+            // Игнорируем клик, если карта уже угадана или выбрана повторно
             if (cardElement.classList.contains('correct') || cardElement === firstSelected) return;
+            
+            // Если сейчас отображается анимация ошибки (красный цвет), новые клики блокируем
             if (document.querySelectorAll('.card.wrong').length > 0) return; 
 
             cardElement.classList.add('selected');
 
             if (!firstSelected) {
+                // Выбор первой карточки в паре
                 firstSelected = cardElement;
             } else {
+                // Выбор второй карточки в паре
                 secondSelected = cardElement;
                 checkCardMatch();
             }
@@ -129,6 +132,11 @@ function generateCards() {
 }
 
 function checkCardMatch() {
+    const grid = document.getElementById("cardGrid");
+    const winMsg = document.getElementById("winMessage");
+    const navBox = document.getElementById("navigationBox");
+
+    // Если ID совпали — пара подобрана верно
     if (firstSelected.dataset.pairId === secondSelected.dataset.pairId) {
         firstSelected.classList.remove('selected');
         secondSelected.classList.remove('selected');
@@ -139,15 +147,20 @@ function checkCardMatch() {
         firstSelected = null;
         secondSelected = null;
 
+        // Если угаданы все 6 пар
         if (matchesFound === 6) {
             setTimeout(() => {
-                document.getElementById("winMessage").style.display = "block";
-            }, 500);
+                grid.style.display = "none";
+                navBox.style.display = "none";
+                winMsg.style.display = "block";
+            }, 600);
         }
     } else {
+        // Если пара подобрана неверно — подсвечиваем красным
         firstSelected.classList.add('wrong');
         secondSelected.classList.add('wrong');
 
+        // Даем пользователю визуально увидеть ошибку и сбрасываем выбор через 600мс
         setTimeout(() => {
             firstSelected.classList.remove('selected', 'wrong');
             secondSelected.classList.remove('selected', 'wrong');
