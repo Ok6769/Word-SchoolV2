@@ -10,7 +10,7 @@
 
 <div class="container" id="gameContainer">
     <h1>🇫🇷 Dis Donc!</h1>
-    <div class="subtitle" id="stageTitle">Französische Wörter lernen</div>
+    <div class="subtitle" id="stageTitle">Teil 1: Multiple Choice</div>
     <div class="progress-text" id="progressText">Frage 1 von 20</div>
     <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
@@ -24,16 +24,20 @@
     </div>
 </div>
 
+<!-- Подключаем твою базу слов -->
 <script src="questions.js"></script>
 <script>
 let current = 0;
 let score = 0;
-let mode = 1; 
+let mode = 1; // 1 = MCQ, 2 = Немецкий ввод, 3 = Французский ввод
 
-// 1. Получаем выбранный юнит из памяти браузера
-const chosenUnit = localStorage.getItem('selectedUnit') || 'all';
+// 1. Извлекаем выбранный юнит из localStorage с защитой от пустых значений
+let chosenUnit = localStorage.getItem('selectedUnit');
+if (!chosenUnit || chosenUnit === 'null' || chosenUnit === 'undefined') {
+    chosenUnit = 'all';
+}
 
-// 2. Фильтруем массив вопросов
+// 2. Фильтруем массив согласно выбранному юниту
 let activeQuestions = [];
 if (chosenUnit === 'all') {
     activeQuestions = [...questions];
@@ -41,22 +45,19 @@ if (chosenUnit === 'all') {
     activeQuestions = questions.filter(q => q.unit == chosenUnit);
 }
 
-// Защита на случай, если в юните слов меньше, чем 20
+// Избыточная защита: если вдруг юнит пустой, берем вообще все слова, чтобы игра не ломалась
+if (activeQuestions.length === 0) {
+    activeQuestions = [...questions];
+}
+
+// 3. Ограничиваем общее количество раундов (максимум 20)
 const MAX = activeQuestions.length > 20 ? 20 : activeQuestions.length;
 
-// Перемешиваем только выбранные слова
+// 4. Перемешиваем выбранный пул слов перед стартом
 activeQuestions.sort(() => Math.random() - 0.5);
 
-// Автоматический запуск игры при загрузке страницы, если слова есть
-if (activeQuestions.length === 0) {
-    document.getElementById("gameContainer").innerHTML = `
-        <h1>⚠️ Keine Wörter gefunden</h1>
-        <p>In diesem Unit sind noch keine Wörter eingetragen.</p>
-        <a class="restart-btn" href="index.html">Zurück zum Hauptmenü</a>
-    `;
-} else {
-    loadQuestion();
-}
+// Запуск первого вопроса
+loadQuestion();
 
 function updateProgress(){
     const pf = document.getElementById("progressFill");
@@ -71,8 +72,11 @@ function loadQuestion(){
     updateProgress();
     document.getElementById("result").textContent = "";
 
+    // Берём данные текущего слова из отфильтрованного списка
     const de = activeQuestions[current].de;
     const fr = activeQuestions[current].fr;
+    
+    // Определяем, что показываем игроку, а что он должен ответить
     const word = (mode === 1 || mode === 3) ? de : fr;
     const correct = (mode === 1 || mode === 3) ? fr : de;
 
@@ -80,9 +84,11 @@ function loadQuestion(){
     const answers = document.getElementById("answers");
     answers.innerHTML = "";
 
+    // --- РЕЖИМ 1: ТЕСТ С ВЫБОРОМ ВАРИАНТОВ ---
     if(mode === 1){
         let options = [correct];
-        // Подбираем случайные варианты ответов из активных вопросов
+        
+        // Собираем 4 уникальных варианта ответа из активного пула слов
         while(options.length < 4 && options.length < activeQuestions.length){
             let r = activeQuestions[Math.floor(Math.random() * activeQuestions.length)].fr;
             if(!options.includes(r)) options.push(r);
@@ -101,7 +107,7 @@ function loadQuestion(){
                     score++;
                 } else {
                     btn.classList.add("wrong");
-                    document.querySelectorAll(".answer-btn").forEach(b=>{
+                    document.querySelectorAll(".answer-btn").forEach(b => {
                         if(b.textContent === correct) b.classList.add("correct");
                     });
                     document.getElementById("result").textContent = "❌ Falsch!";
@@ -111,28 +117,32 @@ function loadQuestion(){
                 setTimeout(()=>{
                     if(current < MAX) loadQuestion();
                     else showContinue(2); 
-                },1200);
+                }, 1200);
             };
             answers.appendChild(btn);
         });
     }
+    // --- РЕЖИМЫ 2 и 3: РУЧНОЙ ВВОД С КЛАВИАТУРЫ ---
     else {
         const input = document.createElement("input");
         input.className = "input-box";
-        input.placeholder = "Schreibe die Übersetzung...";
+        input.placeholder = mode === 2 ? "Auf Deutsch schreiben..." : "Écrire en français...";
 
         const btn = document.createElement("button");
         btn.className = "answer-btn";
         btn.textContent = "Prüfen";
 
+        // Функция очистки текста для мягкой проверки ответов
         function clean(text, currentMode){
             if (currentMode === 2) {
+                // Для немецкого убираем артикли, лишние пробелы и делаем первую букву заглавной
                 let cleared = text.replace(/\b(der|die|das)\b/gi, "").replace(/\s+/g," ").trim();
                 if(cleared.length > 0) {
                     cleared = cleared.charAt(0).toUpperCase() + cleared.slice(1);
                 }
                 return cleared;
             } else {
+                // Для французского просто приводим к нижнему регистру
                 return text.toLowerCase().trim();
             }
         }
@@ -163,12 +173,13 @@ function loadQuestion(){
                     if(mode === 2) showContinue(3); 
                     else finishQuiz(); 
                 }
-            },1200);
+            }, 1200);
         }
 
         btn.onclick = check;
-        input.addEventListener("keydown",e=>{ if(e.key==="Enter") check(); });
+        input.addEventListener("keydown", e => { if(e.key === "Enter") check(); });
 
+        // Если режим 3 (французский ввод), отрисовываем экранную клавиатуру со спецсимволами
         if(mode === 3) {
             const keyboardContainer = document.createElement("div");
             keyboardContainer.className = "french-keyboard";
@@ -213,4 +224,60 @@ function showContinue(nextMode){
     } else if(nextMode === 3) {
         title = "🔥 Teil 2 fertig!";
         subtitle = "Jetzt kommt Teil 3 (Eingabe auf Französisch)";
-        btn
+        btnClick = "startStage3()";
+    }
+
+    document.getElementById("gameContainer").innerHTML = `
+        <h1>${title}</h1>
+        <p>${subtitle}</p>
+        <button class="restart-btn" onclick="${btnClick}">Weiter ▶</button>
+    `;
+}
+
+function startStage2(){
+    current = 0; mode = 2;
+    setupStageHeader("Teil 2: Eingabe auf Deutsch");
+    loadQuestion();
+}
+
+function startStage3(){
+    current = 0; mode = 3;
+    setupStageHeader("Teil 3: Eingabe auf Französisch");
+    loadQuestion();
+}
+
+function setupStageHeader(titleString) {
+    document.getElementById("gameContainer").innerHTML = `
+        <h1>🇫🇷 Dis Donc!</h1>
+        <div class="subtitle">${titleString}</div>
+        <div class="progress-text" id="progressText"></div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div id="word"></div>
+        <div id="answers"></div>
+        <div id="result"></div>
+        <div class="score-box" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Punkte: <span id="score">${score}</span></span>
+            <a class="restart-btn" style="font-size:14px; padding:8px 15px; margin:0;" href="index.html">↩ Menü</a>
+        </div>
+    `;
+}
+
+function finishQuiz(){
+    const totalPossiblePoints = MAX * 3;
+    const percent = Math.round((score / totalPossiblePoints) * 100);
+    let msg = percent >= 90 ? "🏆 Fantastisch!" : percent >= 70 ? "🥈 Sehr gut!" : percent >= 50 ? "👍 Gut!" : "📚 Weiter üben!";
+
+    document.getElementById("gameContainer").innerHTML = `
+        <h1>🎉 Fertig!</h1>
+        <h2>${msg}</h2>
+        <h1>${score}/${totalPossiblePoints}</h1>
+        <p>${percent}% richtig</p>
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="restart-btn" onclick="location.reload()">Neu starten 🔄</button>
+            <a class="restart-btn" style="background:#666;" href="index.html">Hauptmenü 🏠</a>
+        </div>
+    `;
+}
+</script>
+</body>
+</html>
