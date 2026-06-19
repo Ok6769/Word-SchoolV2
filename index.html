@@ -63,7 +63,7 @@
             opacity: 0;
         }
         .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-4px) rotate(-45deg);
+            transform: translateY(-8px) rotate(-45deg);
         }
 
         /* Боковая панель */
@@ -161,15 +161,6 @@
             color: #16a34a;
         }
 
-        .dev-badge::before {
-            content: "";
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: currentColor;
-            border-radius: 50%;
-        }
-
         .author-text {
             font-weight: 600;
             color: #334155;
@@ -219,7 +210,6 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* При ховере текст внутри карточки становится белым */
         .mode-card:hover .mode-title,
         .mode-card:hover .mode-desc {
             color: #ffffff !important;
@@ -259,17 +249,14 @@
 </head>
 <body class="theme-orange">
 
-    <!-- КНОПКА МЕНЮ -->
     <button class="menu-toggle" id="menuBtn" onclick="toggleMenu()">
         <span></span>
         <span></span>
         <span></span>
     </button>
 
-    <!-- СЛОЙ ЗАТЕМНЕНИЯ -->
     <div class="overlay" id="overlayShadow" onclick="toggleMenu()"></div>
 
-    <!-- ВЫЕЗЖАЮЩИЙ SIDEBAR -->
     <div class="sidebar" id="sidebarMenu">
         <div class="sidebar-top">
             <div class="sidebar-header">
@@ -298,7 +285,6 @@
             </div>
         </div>
 
-        <!-- ПОДВАЛ МЕНЮ С АВТОРСТВОМ -->
         <div class="sidebar-footer">
             <div class="dev-badge">In Entwicklung</div>
             <div>Diese Webseite befindet sich noch in der Entwicklungsphase. Einige Funktionen werden optimiert.</div>
@@ -306,7 +292,6 @@
         </div>
     </div>
 
-    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div class="main-content">
         <div class="dashboard-container">
             <h1 id="welcomeHeader" style="margin: 0 0 8px 0; font-size: 38px; font-weight: 900; color: var(--text-main);">Dis Donc! 6</h1>
