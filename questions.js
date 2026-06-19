@@ -210,7 +210,6 @@ const questions = [
     { de: "Wer ist das?", fr: "C'est qui?", book: 5, unit: 6 },
     { de: "Was trägt dein Bauwerk?", fr: "Que porte ton monument?", book: 5, unit: 6 },
 
-   const questions = [
     // === DIS DONC! 6 (Оранжевая тема) ===
     // Unit 1
     { de: "die Hausaufgaben machen", fr: "faire les devoirs (m pl)", book: 6, unit: 1 },
