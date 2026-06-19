@@ -6,137 +6,172 @@
     <title>Dis Donc! – Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Стили для профессиональной двухпанельной разметки */
         body {
             display: flex;
-            margin: 0;
-            padding: 0;
             min-height: 100vh;
-            background-color: #f5f7fa;
         }
 
-        /* Боковая панель (Sidebar) */
+        /* Улучшенный Sidebar */
         .sidebar {
-            width: 280px;
-            background: #width;
+            width: 300px;
             background-color: #ffffff;
-            border-right: 2px solid #e4e8ee;
-            padding: 30px 20px;
+            border-right: 1px solid #e4e8ee;
+            padding: 40px 24px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+            gap: 25px;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.01);
+        }
+
+        .sidebar-header {
+            font-size: 20px;
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .sidebar-title {
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: #8a94a6;
-            font-weight: bold;
-            margin-bottom: 5px;
+            color: #a0aec0;
+            font-weight: 700;
         }
 
         .select-box {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             font-size: 15px;
-            border-radius: 10px;
-            border: 2px solid #dcdfe6;
+            font-weight: 500;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
             outline: none;
             cursor: pointer;
             background-color: #fff;
-            transition: all 0.3s;
+            transition: all 0.2s ease;
+            color: #4a5568;
         }
         
-        /* Основной контент справа */
+        .select-box:focus { 
+            border-color: var(--main-color); 
+            box-shadow: 0 0 0 3px var(--bg-color);
+        }
+        
+        /* Правая контентная область */
         .main-content {
             flex: 1;
-            padding: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 40px;
         }
 
         .dashboard-container {
             width: 100%;
-            max-width: 600px;
-            background: white;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            text-align: center;
+            max-width: 550px;
+            background: #ffffff;
+            padding: 45px;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
         }
 
-        /* Переключатель тем в зависимости от выбранной книги */
-        :root {
-            --main-color: #ff8c1a; /* Цвет по умолчанию (Dis Donc 6) */
-            --main-hover: #e07b13;
+        /* Красивые плитки режимов */
+        .mode-card {
+            display: block;
+            text-decoration: none;
+            text-align: left;
+            padding: 22px;
+            border: 2px solid #e2e8f0;
+            border-radius: 18px;
+            color: #2c3e50;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+            background: #ffffff;
         }
 
-        body.theme-green {
-            --main-color: #2ecc71; /* Зелёный цвет для Dis Donc 5 */
-            --main-hover: #27ae60;
+        .mode-card:hover {
+            border-color: var(--main-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--bg-color);
         }
 
-        /* Динамически меняем цвета элементов управления */
-        .select-box:focus { border-color: var(--main-color); }
-        h1 { color: #2c3e50; margin-top: 0; }
-        .mode-btn {
-            border: 2px solid var(--main-color) !important;
+        .mode-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
         }
-        .mode-btn:hover {
-            background: var(--main-color) !important;
-            color: white !important;
+
+        .mode-desc {
+            display: block;
+            font-size: 13px;
+            color: #718096;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body class="theme-orange">
 
     <div class="sidebar">
-        <div>
-            <div class="sidebar-title">📖 ЛЕКЦИЯ</div>
+        <div class="sidebar-header">
+            <span>🇫🇷</span> Dis Donc! App
+        </div>
+        <hr style="border: 0; border-top: 1px solid #edf2f7; margin: 0 0 10px 0;">
+        
+        <div class="sidebar-section">
+            <div class="sidebar-title">Lehrbuch auswählen</div>
             <select class="select-box" id="bookSelect" onchange="changeBook()">
-                <option value="5">Dis Donc! 5 (Grün)</option>
-                <option value="6">Dis Donc! 6 (Orange)</option>
+                <option value="5">📚 Dis Donc! 5 (Grün)</option>
+                <option value="6">📚 Dis Donc! 6 (Orange)</option>
             </select>
         </div>
 
-        <div>
-            <div class="sidebar-title">🔖 ЮНИТ</div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">Unit filtern</div>
             <select class="select-box" id="unitSelect" onchange="saveSelection()">
-                <option value="all">Alle Units (Все слова)</option>
-                <option value="1">Unit 1</option>
-                <option value="2">Unit 2</option>
-                <option value="3">Unit 3</option>
-                <option value="4">Unit 4</option>
-                <option value="5">Unit 5</option>
-                <option value="6">Unit 6</option>
+                <option value="all">🌍 Alle Units</option>
+                <option value="1">📍 Unit 1</option>
+                <option value="2">📍 Unit 2</option>
+                <option value="3">📍 Unit 3</option>
+                <option value="4">📍 Unit 4</option>
+                <option value="5">📍 Unit 5</option>
+                <option value="6">📍 Unit 6</option>
             </select>
         </div>
     </div>
 
     <div class="main-content">
         <div class="dashboard-container">
-            <h1 id="welcomeHeader">🇫🇷 Dis Donc! 6</h1>
-            <p style="color: #7f8c8d; margin-bottom: 30px;">Wähle links dein Buch und Unit, danach starte das Training!</p>
+            <h1 id="welcomeHeader" style="margin-bottom: 8px; font-weight: 800;">Dis Donc! 6</h1>
+            <div class="subtitle">Wähle dein Lernmedium und verbessere dein Französisch!</div>
             
-            <div class="mode-selection" style="display: flex; flex-direction: column; gap: 15px;">
-                <a href="quiz.html" class="mode-btn" style="text-decoration: none; text-align: left; display: block; padding: 20px; border-radius: 15px; color: #333; font-weight: bold; transition: 0.2s;">
-                    📝 Klassischer Test
-                    <span style="display: block; font-weight: normal; font-size: 13px; color: #7f8c8d; margin-top: 5px;">Drei Stufen: MCQ, Deutsch- und Französisch-Eingabe.</span>
+            <div style="margin-top: 30px;">
+                <a href="quiz.html" class="mode-card">
+                    <span class="mode-title">📝 Klassischer Test</span>
+                    <span class="mode-desc">Perfekt für Vokabelabfragen. Beinhaltet Multiple Choice, Übersetzung ins Deutsche und exaktes Schreiben auf Französisch.</span>
                 </a>
                 
-                <a href="cards.html" class="mode-btn" style="text-decoration: none; text-align: left; display: block; padding: 20px; border-radius: 15px; color: #333; font-weight: bold; transition: 0.2s;">
-                    🃏 Karten-Spiel (Quizlet-Style)
-                    <span style="display: block; font-weight: normal; font-size: 13px; color: #7f8c8d; margin-top: 5px;">Verbinde französische und deutsche Paare.</span>
+                <a href="cards.html" class="mode-card">
+                    <span class="mode-title">🃏 Paare finden</span>
+                    <span class="mode-desc">Ein interaktives Zuordnungsspiel. Verbinde die passenden deutschen und französischen Wortpaare auf Zeit.</span>
                 </a>
             </div>
         </div>
     </div>
 
 <script>
-    // Инициализация при первой загрузке сайта
     let currentBook = localStorage.getItem('selectedBook') || '6';
     let currentUnit = localStorage.getItem('selectedUnit') || 'all';
 
@@ -159,10 +194,10 @@
     function applyTheme(book) {
         if(book === '5') {
             document.body.className = 'theme-green';
-            document.getElementById('welcomeHeader').textContent = '🇫🇷 Dis Donc! 5';
+            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 5';
         } else {
             document.body.className = 'theme-orange';
-            document.getElementById('welcomeHeader').textContent = '🇫🇷 Dis Donc! 6';
+            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 6';
         }
     }
 </script>
