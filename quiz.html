@@ -1,31 +1,98 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dis Donc! - Quiz</title>
     <style>
-        body { font-family: sans-serif; background: #f8fafc; padding: 20px; display: flex; justify-content: center; }
-        /* Основной контейнер теперь ниже и компактнее для ноутбуков */
-        .container { background: #ffffff; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; width: 100%; max-width: 450px; }
-        
-        /* Кнопка "Zum Hauptmenü" */
-        .back-btn { 
-            display: inline-flex; align-items: center; gap: 8px; 
-            padding: 8px 16px; background: #f1f5f9; border: 1px solid #e2e8f0; 
-            border-radius: 8px; color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600;
+        :root {
+            --bg-color: #f8fafc;
+            --container-bg: #ffffff;
+            --accent-color: #ff8c1a;
+            --text-main: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(rgba(148, 163, 184, 0.25) 1.5px, transparent 1.5px);
+            background-size: 26px 26px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--container-bg);
+            padding: 48px;
+            border-radius: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            width: 100%;
+            max-width: 600px; /* Вернул ширину */
+            box-sizing: border-box;
+        }
+
+        /* Стиль заголовка и кнопки "Назад" */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 16px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            transition: 0.2s;
         }
         
-        #word { font-size: 24px; font-weight: 800; margin: 20px 0; }
-        .answer-btn { width: 100%; padding: 14px; margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; cursor: pointer; }
+        .back-btn:hover { background: #e2e8f0; color: #1e293b; }
+
+        /* Элегантный текст */
+        .stage-title { font-size: 14px; font-weight: 800; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
+        .word-display { font-size: 36px; font-weight: 800; color: var(--text-main); margin-bottom: 30px; }
+
+        /* Кнопки ответов - возвращаем красивый стиль */
+        .answer-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 2px solid #f1f5f9;
+            border-radius: 20px;
+            background: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .answer-btn:hover { border-color: var(--accent-color); background: #fffaf5; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h2 style="margin: 0; font-size: 18px;">Klassischer Test</h2>
+    <div class="header-row">
+        <div>
+            <div class="stage-title">Klassischer Test</div>
+        </div>
         <a href="index.html" class="back-btn">← Zum Hauptmenü</a>
     </div>
+
+    <div class="word-display">das Kino</div>
     
-    <div id="word">das Kino</div>
     <div id="answers">
         <button class="answer-btn">le courage</button>
         <button class="answer-btn">le jardin</button>
