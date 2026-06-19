@@ -8,20 +8,95 @@
     <style>
         body {
             display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
-            background: #f4f7f6;
+            margin: 0;
+            overflow-x: hidden;
+            /* Добавляем сложный, глубокий полупрозрачный паттерн на фон */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 140, 26, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(255, 140, 26, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
         }
 
-        /* Премиальный Sidebar */
-        .sidebar {
-            width: 320px;
-            background-color: #ffffff;
-            border-right: 1px solid #e2e8f0;
-            padding: 50px 30px;
+        body.theme-green {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(46, 204, 113, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(46, 204, 113, 0.05) 0px, transparent 50%);
+        }
+
+        /* Кнопка три полоски (Гамбургер) */
+        .menu-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: #ffffff;
+            border: 2px solid #edf2f7;
+            border-radius: 14px;
+            cursor: pointer;
             display: flex;
             flex-direction: column;
-            gap: 35px;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.01);
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s ease;
+        }
+
+        .menu-toggle:hover {
+            transform: scale(1.05);
+            border-color: var(--main-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 22px;
+            height: 3px;
+            background-color: var(--text-main);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Анимация превращения полосок в крестик при открытии */
+        .menu-toggle.active span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-toggle.active span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Выезжающая боковая панель (Drawer) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -340px; /* Изначально спрятана справа */
+            width: 340px;
+            height: 100vh;
+            background-color: #ffffff;
+            border-left: 1px solid #e2e8f0;
+            padding: 90px 30px 40px 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Прижимает футер меню к низу */
+            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+        }
+
+        .sidebar.open {
+            right: 0;
         }
 
         .sidebar-header {
@@ -38,6 +113,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            margin-top: 25px;
         }
 
         .sidebar-title {
@@ -60,22 +136,52 @@
             background-color: #f8fafc;
             transition: all 0.25s ease;
             color: #4a5568;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
         }
         
         .select-box:focus { 
             border-color: var(--main-color); 
             background-color: #ffffff;
-            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
+        }
+
+        /* Блок с предупреждением и авторством внизу меню */
+        .sidebar-footer {
+            border-top: 1px solid #edf2f7;
+            padding-top: 20px;
+            font-size: 12px;
+            line-height: 1.6;
+            color: #718096;
+        }
+
+        .dev-badge {
+            display: inline-block;
+            background: #fff5f5;
+            color: #e53e3e;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        /* Правая контентная зона */
+        body.theme-green .dev-badge {
+            background: #f0fff4;
+            color: #38a169;
+        }
+
+        .author-text {
+            font-weight: 600;
+            color: #4a5568;
+            margin-top: 4px;
+        }
+        
+        /* Центральный контейнер */
         .main-content {
-            flex: 1;
+            padding: 20px;
+            width: 100%;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 60px;
         }
 
         .dashboard-container {
@@ -86,9 +192,9 @@
             border-radius: 32px;
             box-shadow: 0 30px 60px -15px rgba(0,0,0,0.05);
             border: 1px solid rgba(226, 232, 240, 0.8);
+            text-align: center;
         }
 
-        /* Карточки режимов */
         .mode-card {
             display: block;
             text-decoration: none;
@@ -126,37 +232,74 @@
             line-height: 1.6;
             font-weight: 500;
         }
+
+        /* Затемнение фона при открытом меню */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.15);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
+        .overlay.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="theme-orange">
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <span style="font-size: 28px;">🇫🇷</span> Dis Donc!
-        </div>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-title">Lehrbuch</div>
-            <select class="select-box" id="bookSelect" onchange="changeBook()">
-                <option value="5">🟢 Dis Donc! 5</option>
-                <option value="6">🟠 Dis Donc! 6</option>
-            </select>
+    <!-- КНОПКА МЕНЮ -->
+    <button class="menu-toggle" id="menuBtn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- СЛОЙ ЗАТЕМНЕНИЯ -->
+    <div class="overlay" id="overlayShadow" onclick="toggleMenu()"></div>
+
+    <!-- ВЫЕЗЖАЮЩИЙ SIDEBAR -->
+    <div class="sidebar" id="sidebarMenu">
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+                <span style="font-size: 28px;">🇫🇷</span> Dis Donc!
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Lehrbuch</div>
+                <select class="select-box" id="bookSelect" onchange="changeBook()">
+                    <option value="5">🟢 Dis Donc! 5</option>
+                    <option value="6">🟠 Dis Donc! 6</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Lektion</div>
+                <select class="select-box" id="unitSelect" onchange="saveSelection()">
+                    <option value="all">🌍 Alle Units</option>
+                    <option value="1">📦 Unit 1</option>
+                    <option value="2">📦 Unit 2</option>
+                    <option value="3">📦 Unit 3</option>
+                    <option value="4">📦 Unit 4</option>
+                    <option value="5">📦 Unit 5</option>
+                    <option value="6">📦 Unit 6</option>
+                </select>
+            </div>
         </div>
 
-        <div class="sidebar-section">
-            <div class="sidebar-title">Lektion</div>
-            <select class="select-box" id="unitSelect" onchange="saveSelection()">
-                <option value="all">🌍 Alle Units</option>
-                <option value="1">📦 Unit 1</option>
-                <option value="2">📦 Unit 2</option>
-                <option value="3">📦 Unit 3</option>
-                <option value="4">📦 Unit 4</option>
-                <option value="5">📦 Unit 5</option>
-                <option value="6">📦 Unit 6</option>
-            </select>
+        <!-- ФУТЕР БОКОВОГО МЕНЮ -->
+        <div class="sidebar-footer">
+            <div class="dev-badge">⚠️ In Entwicklung</div>
+            <div>Diese Webseite befindet sich noch in der Entwicklungsphase. Einige Funktionen werden optimiert.</div>
+            <div class="author-text">Erstellt von: Gleb Leynert</div>
         </div>
     </div>
 
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <div class="main-content">
         <div class="dashboard-container">
             <h1 id="welcomeHeader" style="margin-bottom: 10px; font-size: 36px;">Dis Donc! 6</h1>
@@ -165,7 +308,7 @@
             <div style="margin-top: 40px;">
                 <a href="quiz.html" class="mode-card">
                     <span class="mode-title">📝 Klassischer Test</span>
-                    <span class="mode-desc">Trainiere dein Gedächtnis in 3 Stufen: Erkennen (Vorauswahl), Übersetzung verstehen и exakter französischer Rechtschreibtest.</span>
+                    <span class="mode-desc">Trainiere dein Gedächtnis in 3 Stufen: Erkennen (Vorauswahl), Übersetzung verstehen und exakter französischer Rechtschreibtest.</span>
                 </a>
                 
                 <a href="cards.html" class="mode-card">
@@ -184,6 +327,13 @@
     document.getElementById('unitSelect').value = currentUnit;
     
     applyTheme(currentBook);
+
+    // Логика открытия/закрытия меню
+    function toggleMenu() {
+        document.getElementById('menuBtn').classList.toggle('active');
+        document.getElementById('sidebarMenu').classList.toggle('open');
+        document.getElementById('overlayShadow').classList.toggle('active');
+    }
 
     function changeBook() {
         currentBook = document.getElementById('bookSelect').value;
