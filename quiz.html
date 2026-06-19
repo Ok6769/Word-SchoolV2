@@ -6,99 +6,487 @@
     <title>Dis Donc! - Quiz</title>
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --container-bg: #ffffff;
-            --accent-color: #ff8c1a;
             --text-main: #1e293b;
+            --main-color: #ff8c1a;
+            --main-gradient: linear-gradient(135deg, #ff8c1a 0%, #ff5722 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(255, 140, 26, 0.3);
+        }
+
+        body.theme-green {
+            --main-color: #2ecc71;
+            --main-gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            --shadow-lg: 0 10px 15px -3px rgba(46, 204, 113, 0.3);
         }
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(rgba(148, 163, 184, 0.25) 1.5px, transparent 1.5px);
-            background-size: 26px 26px;
-            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            
+            /* Тот самый новый детализированный фон */
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(255, 140, 26, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 100% 100%, rgba(255, 140, 26, 0.05) 0%, transparent 45%),
+                radial-gradient(rgba(148, 163, 184, 0.25) 1.5px, transparent 1.5px);
+            background-size: 100% 100%, 100% 100%, 26px 26px;
+            background-position: 0 0, 0 0, -1.5px -1.5px;
+            background-attachment: fixed;
         }
 
+        body.theme-green {
+            background-color: #f4fbf7;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 100% 100%, rgba(46, 204, 113, 0.05) 0%, transparent 45%),
+                radial-gradient(rgba(74, 222, 128, 0.3) 1.5px, transparent 1.5px);
+        }
+
+        /* Главная белая карточка квиза */
         .container {
-            background: var(--container-bg);
-            padding: 48px;
+            background: #ffffff;
+            padding: 40px;
             border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.03);
             border: 1px solid #e2e8f0;
             width: 100%;
-            max-width: 600px; /* Вернул ширину */
+            max-width: 500px;
+            text-align: center;
             box-sizing: border-box;
         }
 
-        /* Стиль заголовка и кнопки "Назад" */
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
-        .back-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .subtitle {
             color: #64748b;
-            text-decoration: none;
             font-weight: 600;
-            font-size: 14px;
-            padding: 10px 16px;
-            background: #f1f5f9;
-            border-radius: 12px;
-            transition: 0.2s;
+            font-size: 15px;
+            margin-bottom: 25px;
         }
-        
-        .back-btn:hover { background: #e2e8f0; color: #1e293b; }
 
-        /* Элегантный текст */
-        .stage-title { font-size: 14px; font-weight: 800; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
-        .word-display { font-size: 36px; font-weight: 800; color: var(--text-main); margin-bottom: 30px; }
+        /* Прогресс-бар */
+        .progress-text {
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-align: left;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-        /* Кнопки ответов - возвращаем красивый стиль */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--main-gradient);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        #word {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 30px 0;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        /* Кнопки ответов */
         .answer-btn {
             display: block;
             width: 100%;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 2px solid #f1f5f9;
-            border-radius: 20px;
-            background: #ffffff;
-            font-size: 18px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 16px;
             font-weight: 600;
+            color: var(--text-main);
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
         }
 
-        .answer-btn:hover { border-color: var(--accent-color); background: #fffaf5; }
+        .answer-btn:hover:not(:disabled) {
+            border-color: var(--main-color);
+            background: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .answer-btn.correct {
+            background: #2ecc71;
+            border-color: #2ecc71;
+            color: white;
+        }
+
+        .answer-btn.wrong {
+            background: #e74c3c;
+            border-color: #e74c3c;
+            color: white;
+        }
+
+        /* Поля ввода и клавиатура */
+        .input-container {
+            margin: 20px 0;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            box-sizing: border-box;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-box:focus { border-color: var(--main-color); }
+        .input-box.correct { border-color: #2ecc71; background: #f0fdf4; }
+        .input-box.wrong { border-color: #e74c3c; background: #fff1f2; }
+
+        .french-keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .char-btn {
+            padding: 10px 14px;
+            font-size: 16px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .char-btn:hover {
+            background: #f1f5f9;
+            border-color: #94a3b8;
+        }
+
+        /* Основные кнопки действий */
+        .restart-btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background: var(--main-gradient);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-md);
+            box-sizing: border-box;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        #result {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0;
+            min-height: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-box {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+            font-weight: 700;
+            color: var(--text-main);
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-row">
-        <div>
-            <div class="stage-title">Klassischer Test</div>
-        </div>
-        <a href="index.html" class="back-btn">← Zum Hauptmenü</a>
-    </div>
-
-    <div class="word-display">das Kino</div>
+<div class="container" id="gameContainer">
+    <h1 style="font-size: 24px; letter-spacing: -0.5px; font-weight: 900; margin-bottom: 5px; color: var(--text-main);">Dis Donc!</h1>
+    <div class="subtitle" id="stageTitle">Teil 1: Multiple Choice</div>
     
-    <div id="answers">
-        <button class="answer-btn">le courage</button>
-        <button class="answer-btn">le jardin</button>
-        <button class="answer-btn">le cinéma</button>
+    <div class="progress-text" id="progressText">Frage 1 von 20</div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+    
+    <div id="word"></div>
+    <div id="answers"></div>
+    <div id="result"></div>
+    
+    <div class="score-box" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>Punkte: <span id="score">0</span></span>
+        <a class="restart-btn" style="padding: 10px 20px; font-size: 14px; background: #f1f4f9; color: var(--text-main); border: 1px solid #e2e8f0; box-shadow: none;" href="index.html">Zurück</a>
     </div>
 </div>
 
+<script src="questions.js"></script>
+<script>
+let current = 0;
+let score = 0;
+let mode = 1; 
+
+const chosenBook = localStorage.getItem('selectedBook') || '6';
+const chosenUnit = localStorage.getItem('selectedUnit') || 'all';
+
+if (chosenBook === '5') {
+    document.body.classList.add('theme-green');
+}
+
+let activeQuestions = questions.filter(q => q.book == chosenBook);
+if (chosenUnit !== 'all') {
+    activeQuestions = activeQuestions.filter(q => q.unit == chosenUnit);
+}
+
+if (activeQuestions.length === 0) {
+    activeQuestions = questions.filter(q => q.book == chosenBook);
+}
+
+const MAX = activeQuestions.length > 20 ? 20 : activeQuestions.length;
+activeQuestions.sort(() => Math.random() - 0.5);
+
+loadQuestion();
+
+function updateProgress(){
+    const pf = document.getElementById("progressFill");
+    const pt = document.getElementById("progressText");
+    if(pf && pt) {
+        pf.style.width = (current / MAX) * 100 + "%";
+        pt.textContent = `Frage ${current + 1} von ${MAX}`;
+    }
+}
+
+function loadQuestion(){
+    updateProgress();
+    document.getElementById("result").textContent = "";
+
+    const de = activeQuestions[current].de;
+    const fr = activeQuestions[current].fr;
+    
+    const wordToShow = (mode === 1 || mode === 3) ? de : fr;
+    const correctAnswers = (mode === 1 || mode === 3) ? fr : de;
+
+    document.getElementById("word").textContent = wordToShow;
+    const answersContainer = document.getElementById("answers");
+    answersContainer.innerHTML = "";
+
+    if(mode === 1){
+        let options = [correctAnswers];
+        while(options.length < 4 && options.length < activeQuestions.length){
+            let randWord = activeQuestions[Math.floor(Math.random() * activeQuestions.length)].fr;
+            if(!options.includes(randWord)) options.push(randWord);
+        }
+        options.sort(() => Math.random() - 0.5);
+
+        options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.className = "answer-btn";
+            btn.textContent = opt;
+            btn.onclick = () => {
+                document.querySelectorAll(".answer-btn").forEach(b => b.disabled = true);
+                if(opt === correctAnswers){
+                    btn.classList.add("correct");
+                    document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>Richtig</span>";
+                    score++;
+                } else {
+                    btn.classList.add("wrong");
+                    document.querySelectorAll(".answer-btn").forEach(b => {
+                        if(b.textContent === correctAnswers) b.classList.add("correct");
+                    });
+                    document.getElementById("result").innerHTML = "<span style='color: #e74c3c;'>Falsch</span>";
+                }
+                document.getElementById("score").textContent = score;
+                current++;
+                setTimeout(()=>{
+                    if(current < MAX) loadQuestion();
+                    else showStageTransition(2); 
+                }, 1200);
+            };
+            answersContainer.appendChild(btn);
+        });
+    }
+    else {
+        const inputContainer = document.createElement("div");
+        inputContainer.className = "input-container";
+
+        const input = document.createElement("input");
+        input.className = "input-box";
+        input.type = "text";
+        input.placeholder = mode === 2 ? "Auf Deutsch schreiben..." : "Écrire en français...";
+        inputContainer.appendChild(input);
+
+        if(mode === 3) {
+            const keyboardContainer = document.createElement("div");
+            keyboardContainer.className = "french-keyboard";
+            const frenchChars = ["é", "è", "à", "ç", "œ", "ù", "â", "ê", "î", "ô", "û", "ë", "ï"];
+            
+            frenchChars.forEach(char => {
+                const charBtn = document.createElement("button");
+                charBtn.className = "char-btn";
+                charBtn.type = "button";
+                charBtn.textContent = char;
+                
+                charBtn.onclick = (e) => {
+                    e.preventDefault();
+                    const start = input.selectionStart;
+                    const end = input.selectionEnd;
+                    input.value = input.value.substring(0, start) + char + input.value.substring(end);
+                    input.selectionStart = input.selectionEnd = start + 1;
+                    input.focus();
+                };
+                keyboardContainer.appendChild(charBtn);
+            });
+            answersContainer.appendChild(keyboardContainer);
+        }
+
+        const submitBtn = document.createElement("button");
+        submitBtn.className = "restart-btn";
+        submitBtn.style.width = "100%";
+        submitBtn.textContent = "Prüfen";
+
+        function cleanText(text, currentMode){
+            if (currentMode === 2) {
+                let cleared = text.replace(/\b(der|die|das)\b/gi, "").replace(/\s+/g," ").trim();
+                if(cleared.length > 0) cleared = cleared.charAt(0).toUpperCase() + cleared.slice(1);
+                return cleared;
+            } else {
+                return text.toLowerCase().trim();
+            }
+        }
+
+        function checkInputResult(){
+            const userAns = cleanText(input.value, mode);
+            const correctAns = cleanText(correctAnswers, mode);
+
+            submitBtn.disabled = true;
+            input.disabled = true;
+
+            if(userAns === correctAns){
+                input.classList.add("correct");
+                document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>Richtig</span>";
+                score++;
+            } else {
+                input.classList.add("wrong");
+                document.getElementById("result").innerHTML = `<span style='color: #e74c3c;'>Falsch! Richtig: <b>${correctAnswers}</b></span>`;
+            }
+
+            document.getElementById("score").textContent = score;
+            current++;
+
+            setTimeout(()=>{
+                if(current < MAX) loadQuestion();
+                else {
+                    if(mode === 2) showStageTransition(3); 
+                    else showFinalResults(); 
+                }
+            }, 2000);
+        }
+
+        submitBtn.onclick = checkInputResult;
+        input.addEventListener("keydown", e => { if(e.key === "Enter") checkInputResult(); });
+
+        answersContainer.appendChild(inputContainer);
+        answersContainer.appendChild(submitBtn);
+        input.focus();
+    }
+}
+
+function showStageTransition(nextMode){
+    let title = "";
+    let subtitle = "";
+    let handlerName = "";
+
+    if(nextMode === 2) {
+        title = "Teil 1 beendet";
+        subtitle = "Bereit für Teil 2? (Eingabe auf Deutsch)";
+        handlerName = "startStage2()";
+    } else if(nextMode === 3) {
+        title = "Teil 2 beendet";
+        subtitle = "Bereit für das Finale? (Eingabe auf Französisch)";
+        handlerName = "startStage3()";
+    }
+
+    document.getElementById("gameContainer").innerHTML = `
+        <h1 style="font-size: 28px; color: var(--text-main); margin-bottom: 5px;">${title}</h1>
+        <p class="subtitle" style="margin-bottom: 30px;">${subtitle}</p>
+        <button class="restart-btn" style="width: 100%;" onclick="${handlerName}">Weiter</button>
+    `;
+}
+
+function startStage2(){
+    current = 0; mode = 2;
+    rebuildQuizLayout("Teil 2: Deutsch-Eingabe");
+    loadQuestion();
+}
+
+function startStage3(){
+    current = 0; mode = 3;
+    rebuildQuizLayout("Teil 3: Französisch-Schreibtest");
+    loadQuestion();
+}
+
+function rebuildQuizLayout(titleText) {
+    document.getElementById("gameContainer").innerHTML = `
+        <h1 style="font-size: 24px; font-weight: 900; margin-bottom: 5px; color: var(--text-main);">Dis Donc!</h1>
+        <div class="subtitle" id="stageTitle">${titleText}</div>
+        <div class="progress-text" id="progressText"></div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div id="word"></div>
+        <div id="answers"></div>
+        <div id="result"></div>
+        <div class="score-box" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Punkte: <span id="score">${score}</span></span>
+            <a class="restart-btn" style="padding: 10px 20px; font-size: 14px; background: #f1f4f9; color: var(--text-main); border: 1px solid #e2e8f0; box-shadow: none;" href="index.html">Zurück</a>
+        </div>
+    `;
+}
+
+function showFinalResults(){
+    const totalPoints = MAX * 3;
+    const percent = Math.round((score / totalPoints) * 100);
+    let feedback = percent >= 90 ? "Absoluter Experte!" : percent >= 70 ? "Großartige Leistung!" : percent >= 50 ? "Gut gemacht!" : "Übung macht den Meister!";
+
+    document.getElementById("gameContainer").innerHTML = `
+        <h1 style="color: var(--text-main); margin-bottom: 5px;">Training beendet</h1>
+        <h2 style="color: #64748b; font-size: 18px; margin-bottom:10px; font-weight: 600;">${feedback}</h2>
+        <div style="font-size: 56px; font-weight: 900; background: var(--main-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 25px 0;">
+            ${score} / ${totalPoints}
+        </div>
+        <p class="subtitle" style="margin-bottom: 30px;">${percent}% aller Antworten waren korrekt.</p>
+        <div style="display:flex; gap:15px; justify-content:center; margin-top: 20px;">
+            <button class="restart-btn" style="flex: 1;" onclick="location.reload()">Wiederholen</button>
+            <a class="restart-btn" style="flex: 1; text-align: center; background: #f1f5f9; color: var(--text-main); border: 1px solid #e2e8f0; box-shadow: none;" href="index.html">Menü</a>
+        </div>
+    `;
+}
+</script>
 </body>
 </html>
