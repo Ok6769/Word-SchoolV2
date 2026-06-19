@@ -6,19 +6,46 @@
     <title>Dis Donc! - Quiz</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Локальные стили для восстановления всех игровых элементов в новом дизайне */
+        /* Глубокий профессиональный фон с градиентными бликами */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 140, 26, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(255, 140, 26, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        body.theme-green {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(46, 204, 113, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 255, 255, 0.5) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(46, 204, 113, 0.05) 0px, transparent 50%);
+        }
+
         #word {
             font-size: 32px;
             font-weight: 800;
             margin: 30px 0;
             color: var(--text-main);
+            letter-spacing: -0.5px;
         }
+
         #result {
-            font-size: 18px;
-            font-weight: 750;
+            font-size: 16px;
+            font-weight: 700;
             margin: 20px 0;
             min-height: 28px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
         .score-box {
             margin-top: 30px;
             padding-top: 20px;
@@ -26,16 +53,28 @@
             font-weight: 700;
             color: var(--text-main);
         }
-        /* Стилизация инпута в стиле нового дизайна */
+
         .input-container {
             margin: 20px 0;
         }
+
+        /* Стильные минималистичные индикаторы вместо эмодзи */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .status-indicator.success { background-color: #2ecc71; }
+        .status-indicator.error { background-color: #e74c3c; }
     </style>
 </head>
 <body>
 
 <div class="container" id="gameContainer">
-    <h1>🇫🇷 Dis Donc!</h1>
+    <h1 style="font-size: 24px; letter-spacing: -0.5px; font-weight: 900; margin-bottom: 5px;">Dis Donc!</h1>
     <div class="subtitle" id="stageTitle">Teil 1: Multiple Choice</div>
     
     <div class="progress-text" id="progressText">Frage 1 von 20</div>
@@ -49,7 +88,7 @@
     
     <div class="score-box" style="display:flex; justify-content:space-between; align-items:center;">
         <span>Punkte: <span id="score">0</span></span>
-        <a class="restart-btn" style="padding: 10px 20px; font-size: 14px;" href="index.html">↩ Menü</a>
+        <a class="restart-btn" style="padding: 10px 20px; font-size: 14px; background: #f1f4f9; color: var(--text-main); border: 1px solid #e2e8f0; box-shadow: none;" href="index.html">Zurück</a>
     </div>
 </div>
 
@@ -57,33 +96,27 @@
 <script>
 let current = 0;
 let score = 0;
-let mode = 1; // 1 = MCQ, 2 = Deutsch, 3 = Französisch
+let mode = 1; 
 
-// 1. Извлекаем настройки из localStorage
 const chosenBook = localStorage.getItem('selectedBook') || '6';
 const chosenUnit = localStorage.getItem('selectedUnit') || 'all';
 
-// 2. Включаем нужную тему оформления
 if (chosenBook === '5') {
     document.body.classList.add('theme-green');
 }
 
-// 3. Фильтруем базу слов по книге и юниту
 let activeQuestions = questions.filter(q => q.book == chosenBook);
 if (chosenUnit !== 'all') {
     activeQuestions = activeQuestions.filter(q => q.unit == chosenUnit);
 }
 
-// Защитный сброс
 if (activeQuestions.length === 0) {
     activeQuestions = questions.filter(q => q.book == chosenBook);
 }
 
-// Перемешиваем и ограничиваем раунд до 20 слов
 const MAX = activeQuestions.length > 20 ? 20 : activeQuestions.length;
 activeQuestions.sort(() => Math.random() - 0.5);
 
-// Запуск первой карточки
 loadQuestion();
 
 function updateProgress(){
@@ -102,7 +135,6 @@ function loadQuestion(){
     const de = activeQuestions[current].de;
     const fr = activeQuestions[current].fr;
     
-    // В зависимости от режима определяем, что показываем, а что спрашиваем
     const wordToShow = (mode === 1 || mode === 3) ? de : fr;
     const correctAnswers = (mode === 1 || mode === 3) ? fr : de;
 
@@ -110,7 +142,6 @@ function loadQuestion(){
     const answersContainer = document.getElementById("answers");
     answersContainer.innerHTML = "";
 
-    // === РЕЖИМ 1: MULTIPLE CHOICE ===
     if(mode === 1){
         let options = [correctAnswers];
         while(options.length < 4 && options.length < activeQuestions.length){
@@ -127,14 +158,14 @@ function loadQuestion(){
                 document.querySelectorAll(".answer-btn").forEach(b => b.disabled = true);
                 if(opt === correctAnswers){
                     btn.classList.add("correct");
-                    document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>✅ Richtig!</span>";
+                    document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'><span class='status-indicator success'></span>Richtig</span>";
                     score++;
                 } else {
                     btn.classList.add("wrong");
                     document.querySelectorAll(".answer-btn").forEach(b => {
                         if(b.textContent === correctAnswers) b.classList.add("correct");
                     });
-                    document.getElementById("result").innerHTML = "<span style='color: #e74c3c;'>❌ Falsch!</span>";
+                    document.getElementById("result").innerHTML = "<span style='color: #e74c3c;'><span class='status-indicator error'></span>Falsch</span>";
                 }
                 document.getElementById("score").textContent = score;
                 current++;
@@ -146,7 +177,6 @@ function loadQuestion(){
             answersContainer.appendChild(btn);
         });
     }
-    // === РЕЖИМЫ 2 и 3: РУЧНОЙ ВВОД ТЕКСТА ===
     else {
         const inputContainer = document.createElement("div");
         inputContainer.className = "input-container";
@@ -157,7 +187,6 @@ function loadQuestion(){
         input.placeholder = mode === 2 ? "Auf Deutsch schreiben..." : "Écrire en français...";
         inputContainer.appendChild(input);
 
-        // Если это режим 3 (пишем по-французски) — добавляем панель символов
         if(mode === 3) {
             const keyboardContainer = document.createElement("div");
             keyboardContainer.className = "french-keyboard";
@@ -187,7 +216,6 @@ function loadQuestion(){
         submitBtn.style.width = "100%";
         submitBtn.textContent = "Prüfen";
 
-        // Функция нормализации текста (умная проверка без учета артиклей и регистра)
         function cleanText(text, currentMode){
             if (currentMode === 2) {
                 let cleared = text.replace(/\b(der|die|das)\b/gi, "").replace(/\s+/g," ").trim();
@@ -207,11 +235,11 @@ function loadQuestion(){
 
             if(userAns === correctAns){
                 input.classList.add("correct");
-                document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>✅ Richtig!</span>";
+                document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'><span class='status-indicator success'></span>Richtig</span>";
                 score++;
             } else {
                 input.classList.add("wrong");
-                document.getElementById("result").innerHTML = `<span style='color: #e74c3c;'>❌ Falsch! Richtig: <b>${correctAnswers}</b></span>`;
+                document.getElementById("result").innerHTML = `<span style='color: #e74c3c;'><span class='status-indicator error'></span>Falsch! Richtig: <b>${correctAnswers}</b></span>`;
             }
 
             document.getElementById("score").textContent = score;
@@ -235,26 +263,25 @@ function loadQuestion(){
     }
 }
 
-// Экран перехода между уровнями сложности
 function showStageTransition(nextMode){
     let title = "";
     let subtitle = "";
     let handlerName = "";
 
     if(nextMode === 2) {
-        title = "🔥 Teil 1 geschafft!";
+        title = "Teil 1 beendet";
         subtitle = "Bereit für Teil 2? (Eingabe auf Deutsch)";
         handlerName = "startStage2()";
     } else if(nextMode === 3) {
-        title = "🚀 Teil 2 geschafft!";
+        title = "Teil 2 beendet";
         subtitle = "Bereit für das Finale? (Eingabe auf Französisch)";
         handlerName = "startStage3()";
     }
 
     document.getElementById("gameContainer").innerHTML = `
-        <h1>${title}</h1>
+        <h1 style="font-size: 28px;">${title}</h1>
         <p class="subtitle">${subtitle}</p>
-        <button class="restart-btn" onclick="${handlerName}">Weitergehen ▶</button>
+        <button class="restart-btn" onclick="${handlerName}">Weiter</button>
     `;
 }
 
@@ -272,7 +299,7 @@ function startStage3(){
 
 function rebuildQuizLayout(titleText) {
     document.getElementById("gameContainer").innerHTML = `
-        <h1>🇫🇷 Dis Donc!</h1>
+        <h1 style="font-size: 24px; font-weight: 900; margin-bottom: 5px;">Dis Donc!</h1>
         <div class="subtitle" id="stageTitle">${titleText}</div>
         <div class="progress-text" id="progressText"></div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
@@ -281,27 +308,26 @@ function rebuildQuizLayout(titleText) {
         <div id="result"></div>
         <div class="score-box" style="display:flex; justify-content:space-between; align-items:center;">
             <span>Punkte: <span id="score">${score}</span></span>
-            <a class="restart-btn" style="padding: 10px 20px; font-size: 14px;" href="index.html">↩ Menü</a>
+            <a class="restart-btn" style="padding: 10px 20px; font-size: 14px; background: #f1f4f9; color: var(--text-main); border: 1px solid #e2e8f0; box-shadow: none;" href="index.html">Zurück</a>
         </div>
     `;
 }
 
-// Финальные результаты игры
 function showFinalResults(){
     const totalPoints = MAX * 3;
     const percent = Math.round((score / totalPoints) * 100);
-    let feedback = percent >= 90 ? "🏆 Absoluter Experte!" : percent >= 70 ? "🥈 Großartige Leistung!" : percent >= 50 ? "👍 Gut gemacht!" : "📚 Übung macht den Meister!";
+    let feedback = percent >= 90 ? "Absoluter Experte!" : percent >= 70 ? "Großartige Leistung!" : percent >= 50 ? "Gut gemacht!" : "Übung macht den Meister!";
 
     document.getElementById("gameContainer").innerHTML = `
-        <h1>🎉 Training beendet!</h1>
-        <h2 style="color: var(--text-main); margin-bottom:10px;">${feedback}</h2>
+        <h1>Training beendet</h1>
+        <h2 style="color: var(--text-main); font-size: 20px; margin-bottom:10px; font-weight: 700;">${feedback}</h2>
         <div style="font-size: 48px; font-weight: 900; background: var(--main-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 20px 0;">
             ${score} / ${totalPoints}
         </div>
         <p class="subtitle">${percent}% aller Antworten waren korrekt.</p>
         <div style="display:flex; gap:15px; justify-content:center; margin-top: 30px;">
-            <button class="restart-btn" onclick="location.reload()">Nochmal 🔄</button>
-            <a class="restart-btn" style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%);" href="index.html">Hauptmenü 🏠</a>
+            <button class="restart-btn" onclick="location.reload()">Wiederholen</button>
+            <a class="restart-btn" style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%);" href="index.html">Hauptmenü</a>
         </div>
     `;
 }
