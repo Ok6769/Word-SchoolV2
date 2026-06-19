@@ -9,116 +9,122 @@
         body {
             display: flex;
             min-height: 100vh;
+            background: #f4f7f6;
         }
 
-        /* Улучшенный Sidebar */
+        /* Премиальный Sidebar */
         .sidebar {
-            width: 300px;
+            width: 320px;
             background-color: #ffffff;
-            border-right: 1px solid #e4e8ee;
-            padding: 40px 24px;
+            border-right: 1px solid #e2e8f0;
+            padding: 50px 30px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.01);
+            gap: 35px;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.01);
         }
 
         .sidebar-header {
-            font-size: 20px;
-            font-weight: 800;
-            color: #2c3e50;
-            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: #1a202c;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
 
         .sidebar-section {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .sidebar-title {
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             color: #a0aec0;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .select-box {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
             font-size: 15px;
-            font-weight: 500;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
+            font-weight: 600;
+            border-radius: 14px;
+            border: 2px solid #edf2f7;
             outline: none;
             cursor: pointer;
-            background-color: #fff;
-            transition: all 0.2s ease;
+            background-color: #f8fafc;
+            transition: all 0.25s ease;
             color: #4a5568;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);
         }
         
         .select-box:focus { 
             border-color: var(--main-color); 
-            box-shadow: 0 0 0 3px var(--bg-color);
+            background-color: #ffffff;
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05);
         }
         
-        /* Правая контентная область */
+        /* Правая контентная зона */
         .main-content {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px;
+            padding: 60px;
         }
 
         .dashboard-container {
             width: 100%;
-            max-width: 550px;
+            max-width: 600px;
             background: #ffffff;
-            padding: 45px;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.03);
-            border: 1px solid rgba(0,0,0,0.02);
+            padding: 50px;
+            border-radius: 32px;
+            box-shadow: 0 30px 60px -15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
-        /* Красивые плитки режимов */
+        /* Карточки режимов */
         .mode-card {
             display: block;
             text-decoration: none;
             text-align: left;
-            padding: 22px;
-            border: 2px solid #e2e8f0;
-            border-radius: 18px;
+            padding: 26px;
+            border: 2px solid #edf2f7;
+            border-radius: 20px;
             color: #2c3e50;
-            transition: all 0.2s ease;
-            margin-bottom: 16px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 20px;
             background: #ffffff;
+            box-shadow: var(--shadow-sm);
         }
 
         .mode-card:hover {
-            border-color: var(--main-color);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px var(--bg-color);
+            border-color: transparent;
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: var(--shadow-lg);
         }
 
         .mode-title {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 19px;
+            font-weight: 800;
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 4px;
+            gap: 12px;
+            margin-bottom: 6px;
+            color: #1a202c;
         }
 
         .mode-desc {
             display: block;
-            font-size: 13px;
+            font-size: 14px;
             color: #718096;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -126,46 +132,45 @@
 
     <div class="sidebar">
         <div class="sidebar-header">
-            <span>🇫🇷</span> Dis Donc! App
+            <span style="font-size: 28px;">🇫🇷</span> Dis Donc!
         </div>
-        <hr style="border: 0; border-top: 1px solid #edf2f7; margin: 0 0 10px 0;">
         
         <div class="sidebar-section">
-            <div class="sidebar-title">Lehrbuch auswählen</div>
+            <div class="sidebar-title">Lehrbuch</div>
             <select class="select-box" id="bookSelect" onchange="changeBook()">
-                <option value="5">📚 Dis Donc! 5 (Grün)</option>
-                <option value="6">📚 Dis Donc! 6 (Orange)</option>
+                <option value="5">🟢 Dis Donc! 5</option>
+                <option value="6">🟠 Dis Donc! 6</option>
             </select>
         </div>
 
         <div class="sidebar-section">
-            <div class="sidebar-title">Unit filtern</div>
+            <div class="sidebar-title">Lektion</div>
             <select class="select-box" id="unitSelect" onchange="saveSelection()">
                 <option value="all">🌍 Alle Units</option>
-                <option value="1">📍 Unit 1</option>
-                <option value="2">📍 Unit 2</option>
-                <option value="3">📍 Unit 3</option>
-                <option value="4">📍 Unit 4</option>
-                <option value="5">📍 Unit 5</option>
-                <option value="6">📍 Unit 6</option>
+                <option value="1">📦 Unit 1</option>
+                <option value="2">📦 Unit 2</option>
+                <option value="3">📦 Unit 3</option>
+                <option value="4">📦 Unit 4</option>
+                <option value="5">📦 Unit 5</option>
+                <option value="6">📦 Unit 6</option>
             </select>
         </div>
     </div>
 
     <div class="main-content">
         <div class="dashboard-container">
-            <h1 id="welcomeHeader" style="margin-bottom: 8px; font-weight: 800;">Dis Donc! 6</h1>
-            <div class="subtitle">Wähle dein Lernmedium und verbessere dein Französisch!</div>
+            <h1 id="welcomeHeader" style="margin-bottom: 10px; font-size: 36px;">Dis Donc! 6</h1>
+            <div class="subtitle">Interaktiver Französisch-Vokabeltrainer</div>
             
-            <div style="margin-top: 30px;">
+            <div style="margin-top: 40px;">
                 <a href="quiz.html" class="mode-card">
                     <span class="mode-title">📝 Klassischer Test</span>
-                    <span class="mode-desc">Perfekt für Vokabelabfragen. Beinhaltet Multiple Choice, Übersetzung ins Deutsche und exaktes Schreiben auf Französisch.</span>
+                    <span class="mode-desc">Trainiere dein Gedächtnis in 3 Stufen: Erkennen (Vorauswahl), Übersetzung verstehen и exakter französischer Rechtschreibtest.</span>
                 </a>
                 
                 <a href="cards.html" class="mode-card">
                     <span class="mode-title">🃏 Paare finden</span>
-                    <span class="mode-desc">Ein interaktives Zuordnungsspiel. Verbinde die passenden deutschen und französischen Wortpaare auf Zeit.</span>
+                    <span class="mode-desc">Verbinde die passenden Kärtchen spielerisch miteinander. Sucht-Faktor garantiert!</span>
                 </a>
             </div>
         </div>
