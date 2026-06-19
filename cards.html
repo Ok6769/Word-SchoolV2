@@ -15,7 +15,7 @@
     <div class="cards-grid" id="cardGrid"></div>
 
     <div id="winMessage" style="display:none; margin-bottom: 20px;">
-        <h2>🎉 Ein tolles Ergebnis! Alle Paare wurden gefunden!</h2>
+        <h2>🎉 Отличный результат! Все пары найдены!</h2>
         <button class="restart-btn" onclick="generateCards()">Nochmal spielen 🔄</button>
     </div>
 
@@ -28,7 +28,7 @@ let firstSelected = null;
 let secondSelected = null;
 let matchesFound = 0;
 
-// Автозапуск генерации карт
+// Автозапуск игры при открытии страницы
 generateCards();
 
 function generateCards() {
@@ -40,17 +40,41 @@ function generateCards() {
     firstSelected = null;
     secondSelected = null;
 
-    const shuffledPairs = [...questions].sort(() => Math.random() - 0.5);
-    const selectedPairs = shuffledPairs.slice(0, 6);
+    // 1. Получаем выбранный юнит и фильтруем слова
+    const chosenUnit = localStorage.getItem('selectedUnit') || 'all';
+    let activeQuestions = chosenUnit === 'all' ? [...questions] : questions.filter(q => q.unit == chosenUnit);
 
+    // Защита: для построения матрицы 4х3 (из 6 пар) нужно как минимум 6 слов в юните!
+    if (activeQuestions.length < 6) {
+        grid.style.display = "block";
+        grid.innerHTML = `
+            <p style="color:#e74c3c; text-align:center; font-weight:bold; font-size:18px;">
+                ⚠️ In diesem Unit gibt es zu wenige Wörter für dieses Spiel!
+            </p>
+            <p style="text-align:center; color:#555;">
+                (Es werden mindestens 6 Wörter benötigt. Dieses Unit hat aktuell nur ${activeQuestions.length}).
+            </p>
+        `;
+        return;
+    } else {
+        grid.style.display = "grid"; // возвращаем сетку, если всё ок
+    }
+
+    // 2. Перемешиваем и выбираем ровно 6 случайных пар
+    activeQuestions.sort(() => Math.random() - 0.5);
+    const selectedPairs = activeQuestions.slice(0, 6);
+
+    // 3. Расскладываем пары на 12 одиночных карточек
     let cardItems = [];
     selectedPairs.forEach((pair, index) => {
-        cardItems.push({ text: pair[0], pairId: index }); 
-        cardItems.push({ text: pair[1], pairId: index }); 
+        cardItems.push({ text: pair.de, pairId: index }); // Немецкое слово
+        cardItems.push({ text: pair.fr, pairId: index }); // Французское слово
     });
 
+    // Перемешиваем карточки между собой
     cardItems.sort(() => Math.random() - 0.5);
 
+    // 4. Отрисовка карточек
     cardItems.forEach(item => {
         const cardElement = document.createElement("div");
         cardElement.className = "card";
@@ -59,7 +83,7 @@ function generateCards() {
 
         cardElement.onclick = () => {
             if (cardElement.classList.contains('correct') || cardElement === firstSelected) return;
-            if (document.querySelectorAll('.card.wrong').length > 0) return; 
+            if (document.querySelectorAll('.card.wrong').length > 0) return; // блокировка клика во время анимации ошибки
 
             cardElement.classList.add('selected');
 
@@ -77,6 +101,7 @@ function generateCards() {
 
 function checkCardMatch() {
     if (firstSelected.dataset.pairId === secondSelected.dataset.pairId) {
+        // Совпадение!
         firstSelected.classList.remove('selected');
         secondSelected.classList.remove('selected');
         firstSelected.classList.add('correct');
@@ -92,6 +117,7 @@ function checkCardMatch() {
             }, 500);
         }
     } else {
+        // Ошибка
         firstSelected.classList.add('wrong');
         secondSelected.classList.add('wrong');
 
