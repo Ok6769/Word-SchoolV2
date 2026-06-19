@@ -14,10 +14,23 @@
             margin: 0;
             overflow-x: hidden;
             background-color: #f8fafc;
+            
+            /* Детализированный фон: мягкие блики + паттерн из аккуратных точек (Dot Grid) */
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(255, 140, 26, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 100% 100%, rgba(255, 140, 26, 0.05) 0%, transparent 45%),
+                radial-gradient(rgba(148, 163, 184, 0.25) 1.5px, transparent 1.5px);
+            background-size: 100% 100%, 100% 100%, 26px 26px;
+            background-position: 0 0, 0 0, -1.5px -1.5px;
+            background-attachment: fixed;
         }
 
         body.theme-green {
             background-color: #f4fbf7;
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(46, 204, 113, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 100% 100%, rgba(46, 204, 113, 0.05) 0%, transparent 45%),
+                radial-gradient(rgba(74, 222, 128, 0.3) 1.5px, transparent 1.5px);
         }
 
         /* Кнопка вызова меню */
@@ -300,52 +313,4 @@
             <div style="margin-top: 40px;">
                 <a href="quiz.html" class="mode-card">
                     <div class="mode-title">Klassischer Test</div>
-                    <span class="mode-desc">Trainiere dein Gedächtnis in 3 Stufen: Erkennen (Vorauswahl), Übersetzung verstehen und exakter französischer Rechtschreibtest.</span>
-                </a>
-                
-                <a href="cards.html" class="mode-card">
-                    <div class="mode-title">Paare finden</div>
-                    <span class="mode-desc">Verbinde die passenden Kärtchen spielerisch miteinander. Sucht-Faktor garantiert!</span>
-                </a>
-            </div>
-        </div>
-    </div>
-
-<script>
-    let currentBook = localStorage.getItem('selectedBook') || '6';
-    let currentUnit = localStorage.getItem('selectedUnit') || 'all';
-
-    document.getElementById('bookSelect').value = currentBook;
-    document.getElementById('unitSelect').value = currentUnit;
-    
-    applyTheme(currentBook);
-
-    function toggleMenu() {
-        document.getElementById('menuBtn').classList.toggle('active');
-        document.getElementById('sidebarMenu').classList.toggle('open');
-        document.getElementById('overlayShadow').classList.toggle('active');
-    }
-
-    function changeBook() {
-        currentBook = document.getElementById('bookSelect').value;
-        localStorage.setItem('selectedBook', currentBook);
-        applyTheme(currentBook);
-    }
-
-    function saveSelection() {
-        currentUnit = document.getElementById('unitSelect').value;
-        localStorage.setItem('selectedUnit', currentUnit);
-    }
-
-    function applyTheme(book) {
-        if(book === '5') {
-            document.body.className = 'theme-green';
-            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 5';
-        } else {
-            document.body.className = 'theme-orange';
-            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 6';
-        }
-    }
-</script>
-</body>
-</html>
+                    <span class
