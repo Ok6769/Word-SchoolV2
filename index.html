@@ -13,21 +13,14 @@
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
-            /* Чистый, благородный фон без лишней пестроты */
             background-color: #f8fafc;
-            background-image: 
-                radial-gradient(circle at 20% 20%, rgba(241, 245, 249, 1) 0%, transparent 80%),
-                radial-gradient(circle at 80% 80%, rgba(226, 232, 240, 0.5) 0%, transparent 80%);
         }
 
         body.theme-green {
             background-color: #f4fbf7;
-            background-image: 
-                radial-gradient(circle at 20% 20%, rgba(240, 253, 244, 1) 0%, transparent 80%),
-                radial-gradient(circle at 80% 80%, rgba(220, 252, 231, 0.4) 0%, transparent 80%);
         }
 
-        /* Кнопка вызова меню (Минималистичные линии вместо значков) */
+        /* Кнопка вызова меню */
         .menu-toggle {
             position: fixed;
             top: 25px;
@@ -44,13 +37,13 @@
             align-items: center;
             gap: 6px;
             z-index: 1000;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .menu-toggle:hover {
             transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             border-color: var(--main-color);
         }
 
@@ -73,7 +66,7 @@
             transform: translateY(-4px) rotate(-45deg);
         }
 
-        /* Выезжающая боковая панель с градиентным бордером */
+        /* Боковая панель */
         .sidebar {
             position: fixed;
             top: 0;
@@ -89,6 +82,7 @@
             box-shadow: -15px 0 30px rgba(0,0,0,0.02);
             transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 999;
+            box-sizing: border-box;
         }
 
         .sidebar.open {
@@ -131,23 +125,14 @@
             background-color: #f8fafc;
             transition: all 0.2s ease;
             color: #334155;
-            appearance: none; /* Убираем дефолтную стрелку браузера */
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
-            background-repeat: no-repeat;
-            background-position: right 16px center;
-            background-size: 16px;
         }
         
         .select-box:focus { 
             border-color: var(--main-color); 
             background-color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(255, 140, 26, 0.1);
-        }
-        body.theme-green .select-box:focus {
-            box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.1);
         }
 
-        /* Информационный подвал меню */
+        /* Подвал меню */
         .sidebar-footer {
             border-top: 1px solid #f1f5f9;
             padding-top: 25px;
@@ -161,4 +146,221 @@
             align-items: center;
             gap: 6px;
             background: #fff1f2;
-            color: #e11d48
+            color: #e11d48;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        body.theme-green .dev-badge {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .dev-badge::before {
+            content: "";
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: currentColor;
+            border-radius: 50%;
+        }
+
+        .author-text {
+            font-weight: 600;
+            color: #334155;
+            margin-top: 6px;
+        }
+        
+        /* Главный контейнер */
+        .main-content {
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 580px;
+            background: #ffffff;
+            padding: 50px;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Карточки режимов */
+        .mode-card {
+            display: block;
+            text-decoration: none;
+            text-align: left;
+            padding: 28px;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            color: #1e293b;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 20px;
+            background: #ffffff;
+            box-sizing: border-box;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-3px);
+            border-color: transparent;
+            background: var(--main-gradient);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* При ховере текст внутри карточки становится белым */
+        .mode-card:hover .mode-title,
+        .mode-card:hover .mode-desc {
+            color: #ffffff !important;
+        }
+
+        .mode-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #1a202c;
+        }
+
+        .mode-desc {
+            display: block;
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* Затемнение */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(4px);
+            z-index: 998;
+            display: none;
+        }
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="theme-orange">
+
+    <!-- КНОПКА МЕНЮ -->
+    <button class="menu-toggle" id="menuBtn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- СЛОЙ ЗАТЕМНЕНИЯ -->
+    <div class="overlay" id="overlayShadow" onclick="toggleMenu()"></div>
+
+    <!-- ВЫЕЗЖАЮЩИЙ SIDEBAR -->
+    <div class="sidebar" id="sidebarMenu">
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+                Dis Donc!
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Lehrbuch</div>
+                <select class="select-box" id="bookSelect" onchange="changeBook()">
+                    <option value="5">Dis Donc! 5</option>
+                    <option value="6">Dis Donc! 6</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-title">Lektion</div>
+                <select class="select-box" id="unitSelect" onchange="saveSelection()">
+                    <option value="all">Alle Units</option>
+                    <option value="1">Unit 1</option>
+                    <option value="2">Unit 2</option>
+                    <option value="3">Unit 3</option>
+                    <option value="4">Unit 4</option>
+                    <option value="5">Unit 5</option>
+                    <option value="6">Unit 6</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- ПОДВАЛ МЕНЮ С АВТОРСТВОМ -->
+        <div class="sidebar-footer">
+            <div class="dev-badge">In Entwicklung</div>
+            <div>Diese Webseite befindet sich noch in der Entwicklungsphase. Einige Funktionen werden optimiert.</div>
+            <div class="author-text">Erstellt von: Gleb Leynert</div>
+        </div>
+    </div>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="main-content">
+        <div class="dashboard-container">
+            <h1 id="welcomeHeader" style="margin: 0 0 8px 0; font-size: 38px; font-weight: 900; color: var(--text-main);">Dis Donc! 6</h1>
+            <div class="subtitle">Interaktiver Französisch-Vokabeltrainer</div>
+            
+            <div style="margin-top: 40px;">
+                <a href="quiz.html" class="mode-card">
+                    <div class="mode-title">Klassischer Test</div>
+                    <span class="mode-desc">Trainiere dein Gedächtnis in 3 Stufen: Erkennen (Vorauswahl), Übersetzung verstehen und exakter französischer Rechtschreibtest.</span>
+                </a>
+                
+                <a href="cards.html" class="mode-card">
+                    <div class="mode-title">Paare finden</div>
+                    <span class="mode-desc">Verbinde die passenden Kärtchen spielerisch miteinander. Sucht-Faktor garantiert!</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let currentBook = localStorage.getItem('selectedBook') || '6';
+    let currentUnit = localStorage.getItem('selectedUnit') || 'all';
+
+    document.getElementById('bookSelect').value = currentBook;
+    document.getElementById('unitSelect').value = currentUnit;
+    
+    applyTheme(currentBook);
+
+    function toggleMenu() {
+        document.getElementById('menuBtn').classList.toggle('active');
+        document.getElementById('sidebarMenu').classList.toggle('open');
+        document.getElementById('overlayShadow').classList.toggle('active');
+    }
+
+    function changeBook() {
+        currentBook = document.getElementById('bookSelect').value;
+        localStorage.setItem('selectedBook', currentBook);
+        applyTheme(currentBook);
+    }
+
+    function saveSelection() {
+        currentUnit = document.getElementById('unitSelect').value;
+        localStorage.setItem('selectedUnit', currentUnit);
+    }
+
+    function applyTheme(book) {
+        if(book === '5') {
+            document.body.className = 'theme-green';
+            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 5';
+        } else {
+            document.body.className = 'theme-orange';
+            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 6';
+        }
+    }
+</script>
+</body>
+</html>
