@@ -3,84 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dis Donc! – Französisch lernen</title>
+    <title>Dis Donc! – Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .welcome-box { text-align: center; margin-bottom: 25px; }
-        
-        /* Стили для блока выбора Юнита */
-        .unit-selector-container {
-            background: #fff;
-            border: 2px solid #ff8c1a;
-            border-radius: 20px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
+        /* Стили для профессиональной двухпанельной разметки */
+        body {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #f5f7fa;
         }
-        .unit-label {
-            font-size: 16px;
+
+        /* Боковая панель (Sidebar) */
+        .sidebar {
+            width: 280px;
+            background: #width;
+            background-color: #ffffff;
+            border-right: 2px solid #e4e8ee;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8a94a6;
             font-weight: bold;
-            color: #ff7a00;
-            margin-bottom: 10px;
-            display: block;
+            margin-bottom: 5px;
         }
-        .unit-select {
+
+        .select-box {
             width: 100%;
-            max-width: 300px;
             padding: 12px;
-            font-size: 16px;
+            font-size: 15px;
             border-radius: 10px;
-            border: 2px solid #ddd;
+            border: 2px solid #dcdfe6;
             outline: none;
             cursor: pointer;
-            transition: border-color 0.3s;
+            background-color: #fff;
+            transition: all 0.3s;
         }
-        .unit-select:focus { border-color: #ff8c1a; }
+        
+        /* Основной контент справа */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        /* Переключатель тем в зависимости от выбранной книги */
+        :root {
+            --main-color: #ff8c1a; /* Цвет по умолчанию (Dis Donc 6) */
+            --main-hover: #e07b13;
+        }
+
+        body.theme-green {
+            --main-color: #2ecc71; /* Зелёный цвет для Dis Donc 5 */
+            --main-hover: #27ae60;
+        }
+
+        /* Динамически меняем цвета элементов управления */
+        .select-box:focus { border-color: var(--main-color); }
+        h1 { color: #2c3e50; margin-top: 0; }
+        .mode-btn {
+            border: 2px solid var(--main-color) !important;
+        }
+        .mode-btn:hover {
+            background: var(--main-color) !important;
+            color: white !important;
+        }
     </style>
 </head>
-<body>
+<body class="theme-orange">
 
-<div class="container" id="gameContainer">
-    <div class="welcome-box">
-        <h1>🇫🇷 Dis Donc!</h1>
-        <div class="subtitle">Wähle deine Lektion und starte das Training!</div>
+    <div class="sidebar">
+        <div>
+            <div class="sidebar-title">📖 ЛЕКЦИЯ</div>
+            <select class="select-box" id="bookSelect" onchange="changeBook()">
+                <option value="5">Dis Donc! 5 (Grün)</option>
+                <option value="6">Dis Donc! 6 (Orange)</option>
+            </select>
+        </div>
+
+        <div>
+            <div class="sidebar-title">🔖 ЮНИТ</div>
+            <select class="select-box" id="unitSelect" onchange="saveSelection()">
+                <option value="all">Alle Units (Все слова)</option>
+                <option value="1">Unit 1</option>
+                <option value="2">Unit 2</option>
+                <option value="3">Unit 3</option>
+                <option value="4">Unit 4</option>
+                <option value="5">Unit 5</option>
+                <option value="6">Unit 6</option>
+            </select>
+        </div>
     </div>
 
-    <!-- Выбор юнита -->
-    <div class="unit-selector-container">
-        <label class="unit-label" for="unitSelect">📖 Wähle ein Unit:</label>
-        <select class="unit-select" id="unitSelect" onchange="saveSelectedUnit()">
-            <option value="all">Alle Units (Alle Wörter)</option>
-            <option value="1">Unit 1</option>
-            <option value="2">Unit 2</option>
-            <option value="3">Unit 3</option>
-        </select>
+    <div class="main-content">
+        <div class="dashboard-container">
+            <h1 id="welcomeHeader">🇫🇷 Dis Donc! 6</h1>
+            <p style="color: #7f8c8d; margin-bottom: 30px;">Wähle links dein Buch und Unit, danach starte das Training!</p>
+            
+            <div class="mode-selection" style="display: flex; flex-direction: column; gap: 15px;">
+                <a href="quiz.html" class="mode-btn" style="text-decoration: none; text-align: left; display: block; padding: 20px; border-radius: 15px; color: #333; font-weight: bold; transition: 0.2s;">
+                    📝 Klassischer Test
+                    <span style="display: block; font-weight: normal; font-size: 13px; color: #7f8c8d; margin-top: 5px;">Drei Stufen: MCQ, Deutsch- und Französisch-Eingabe.</span>
+                </a>
+                
+                <a href="cards.html" class="mode-btn" style="text-decoration: none; text-align: left; display: block; padding: 20px; border-radius: 15px; color: #333; font-weight: bold; transition: 0.2s;">
+                    🃏 Karten-Spiel (Quizlet-Style)
+                    <span style="display: block; font-weight: normal; font-size: 13px; color: #7f8c8d; margin-top: 5px;">Verbinde französische und deutsche Paare.</span>
+                </a>
+            </div>
+        </div>
     </div>
-    
-    <div class="mode-selection">
-        <a href="quiz.html" class="mode-btn">
-            📝 Klassischer Test
-            <span>Drei Stufen: Multiple-Choice, Deutsch-Eingabe und Französisch-Eingabe.</span>
-        </a>
-        
-        <a href="cards.html" class="mode-btn">
-            🃏 Karten-Spiel (Quizlet-Style)
-            <span>Finde die Paare! Verbinde deutsche und französische Begriffe in einer 4x3 Matrix.</span>
-        </a>
-    </div>
-</div>
 
 <script>
-    // По умолчанию ставим "все", если раньше ничего не выбирали
-    if(!localStorage.getItem('selectedUnit')) {
-        localStorage.setItem('selectedUnit', 'all');
-    } else {
-        document.getElementById('unitSelect').value = localStorage.getItem('selectedUnit');
+    // Инициализация при первой загрузке сайта
+    let currentBook = localStorage.getItem('selectedBook') || '6';
+    let currentUnit = localStorage.getItem('selectedUnit') || 'all';
+
+    document.getElementById('bookSelect').value = currentBook;
+    document.getElementById('unitSelect').value = currentUnit;
+    
+    applyTheme(currentBook);
+
+    function changeBook() {
+        currentBook = document.getElementById('bookSelect').value;
+        localStorage.setItem('selectedBook', currentBook);
+        applyTheme(currentBook);
     }
 
-    function saveSelectedUnit() {
-        const selectedValue = document.getElementById('unitSelect').value;
-        localStorage.setItem('selectedUnit', selectedValue);
+    function saveSelection() {
+        currentUnit = document.getElementById('unitSelect').value;
+        localStorage.setItem('selectedUnit', currentUnit);
+    }
+
+    function applyTheme(book) {
+        if(book === '5') {
+            document.body.className = 'theme-green';
+            document.getElementById('welcomeHeader').textContent = '🇫🇷 Dis Donc! 5';
+        } else {
+            document.body.className = 'theme-orange';
+            document.getElementById('welcomeHeader').textContent = '🇫🇷 Dis Donc! 6';
+        }
     }
 </script>
 </body>
