@@ -5,12 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dis Donc! – Französisch lernen</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .welcome-box { text-align: center; margin-bottom: 25px; }
+        
+        /* Стили для блока выбора Юнита */
+        .unit-selector-container {
+            background: #fff;
+            border: 2px solid #ff8c1a;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .unit-label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ff7a00;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .unit-select {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .unit-select:focus { border-color: #ff8c1a; }
+    </style>
 </head>
 <body>
 
 <div class="container" id="gameContainer">
-    <h1>🇫🇷 Dis Donc!</h1>
-    <div class="subtitle">Wähle einen Spielmodus aus:</div>
+    <div class="welcome-box">
+        <h1>🇫🇷 Dis Donc!</h1>
+        <div class="subtitle">Wähle deine Lektion und starte das Training!</div>
+    </div>
+
+    <!-- Выбор юнита -->
+    <div class="unit-selector-container">
+        <label class="unit-label" for="unitSelect">📖 Wähle ein Unit:</label>
+        <select class="unit-select" id="unitSelect" onchange="saveSelectedUnit()">
+            <option value="all">Alle Units (Alle Wörter)</option>
+            <option value="1">Unit 1</option>
+            <option value="2">Unit 2</option>
+            <option value="3">Unit 3</option>
+        </select>
+    </div>
     
     <div class="mode-selection">
         <a href="quiz.html" class="mode-btn">
@@ -19,11 +64,24 @@
         </a>
         
         <a href="cards.html" class="mode-btn">
-            🃏 Karten-Spiel
+            🃏 Karten-Spiel (Quizlet-Style)
             <span>Finde die Paare! Verbinde deutsche und französische Begriffe in einer 4x3 Matrix.</span>
         </a>
     </div>
 </div>
 
+<script>
+    // По умолчанию ставим "все", если раньше ничего не выбирали
+    if(!localStorage.getItem('selectedUnit')) {
+        localStorage.setItem('selectedUnit', 'all');
+    } else {
+        document.getElementById('unitSelect').value = localStorage.getItem('selectedUnit');
+    }
+
+    function saveSelectedUnit() {
+        const selectedValue = document.getElementById('unitSelect').value;
+        localStorage.setItem('selectedUnit', selectedValue);
+    }
+</script>
 </body>
 </html>
