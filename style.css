@@ -1,3 +1,30 @@
+/* Поддержка динамических тем для всех страниц */
+:root {
+    --main-color: #ff8c1a; 
+    --main-hover: #e07b13;
+}
+
+body.theme-green {
+    --main-color: #2ecc71;
+    --main-hover: #27ae60;
+}
+
+/* Применяем переменные к элементам (замени старые оранжевые цвета на эти переменные) */
+.progress-fill {
+    background-color: var(--main-color) !important;
+}
+.restart-btn {
+    background-color: var(--main-color) !important;
+}
+.restart-btn:hover {
+    background-color: var(--main-hover) !important;
+}
+.card.selected {
+    border-color: var(--main-color) !important;
+    color: var(--main-color) !important;
+}
+
+
 *{box-sizing:border-box;}
 
 body{
