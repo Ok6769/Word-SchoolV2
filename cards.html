@@ -5,6 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dis Donc! - Karten</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Настройка CSS переменных для тем карт */
+        :root {
+            --main-color: #ff8c1a;
+            --main-hover: #e07b13;
+        }
+        body.theme-green {
+            --main-color: #2ecc71;
+            --main-hover: #27ae60;
+        }
+        /* Динамическое окрашивание выбранных карточек */
+        .card.selected {
+            border-color: var(--main-color) !important;
+            color: var(--main-color) !important;
+        }
+        .restart-btn { background-color: var(--main-color) !important; }
+        .restart-btn:hover { background-color: var(--main-hover) !important; }
+    </style>
 </head>
 <body>
 
@@ -40,41 +58,52 @@ function generateCards() {
     firstSelected = null;
     secondSelected = null;
 
-    // 1. Получаем выбранный юнит и фильтруем слова
+    // 1. Извлекаем выбранные книгу и юнит
+    const chosenBook = localStorage.getItem('selectedBook') || '6';
     const chosenUnit = localStorage.getItem('selectedUnit') || 'all';
-    let activeQuestions = chosenUnit === 'all' ? [...questions] : questions.filter(q => q.unit == chosenUnit);
 
-    // Защита: для построения матрицы 4х3 (из 6 пар) нужно как минимум 6 слов в юните!
+    // 2. Включаем зелёный дизайн, если выбрана 5-я книга
+    if (chosenBook === '5') {
+        document.body.className = 'theme-green';
+    } else {
+        document.body.className = '';
+    }
+
+    // 3. Фильтруем массив слов по книге и юниту
+    let activeQuestions = questions.filter(q => q.book == chosenBook);
+    if (chosenUnit !== 'all') {
+        activeQuestions = activeQuestions.filter(q => q.unit == chosenUnit);
+    }
+
+    // Защита: для построения игрового поля нужно минимум 6 слов в выбранной вкладке
     if (activeQuestions.length < 6) {
         grid.style.display = "block";
         grid.innerHTML = `
             <p style="color:#e74c3c; text-align:center; font-weight:bold; font-size:18px;">
-                ⚠️ In diesem Unit gibt es zu wenige Wörter für dieses Spiel!
+                ⚠️ Zu wenige Wörter in dieser Auswahl!
             </p>
             <p style="text-align:center; color:#555;">
-                (Es werden mindestens 6 Wörter benötigt. Dieses Unit hat aktuell nur ${activeQuestions.length}).
+                Für dieses Spiel werden mindestens 6 Wörter im Unit benötigt. (Aktuell: ${activeQuestions.length}).
             </p>
         `;
         return;
     } else {
-        grid.style.display = "grid"; // возвращаем сетку, если всё ок
+        grid.style.display = "grid";
     }
 
-    // 2. Перемешиваем и выбираем ровно 6 случайных пар
+    // 4. Вытаскиваем 6 случайных пар для раунда
     activeQuestions.sort(() => Math.random() - 0.5);
     const selectedPairs = activeQuestions.slice(0, 6);
 
-    // 3. Расскладываем пары на 12 одиночных карточек
     let cardItems = [];
     selectedPairs.forEach((pair, index) => {
-        cardItems.push({ text: pair.de, pairId: index }); // Немецкое слово
-        cardItems.push({ text: pair.fr, pairId: index }); // Французское слово
+        cardItems.push({ text: pair.de, pairId: index });
+        cardItems.push({ text: pair.fr, pairId: index });
     });
 
-    // Перемешиваем карточки между собой
     cardItems.sort(() => Math.random() - 0.5);
 
-    // 4. Отрисовка карточек
+    // 5. Отрендерить карточки на экране
     cardItems.forEach(item => {
         const cardElement = document.createElement("div");
         cardElement.className = "card";
@@ -83,7 +112,7 @@ function generateCards() {
 
         cardElement.onclick = () => {
             if (cardElement.classList.contains('correct') || cardElement === firstSelected) return;
-            if (document.querySelectorAll('.card.wrong').length > 0) return; // блокировка клика во время анимации ошибки
+            if (document.querySelectorAll('.card.wrong').length > 0) return; 
 
             cardElement.classList.add('selected');
 
@@ -101,7 +130,6 @@ function generateCards() {
 
 function checkCardMatch() {
     if (firstSelected.dataset.pairId === secondSelected.dataset.pairId) {
-        // Совпадение!
         firstSelected.classList.remove('selected');
         secondSelected.classList.remove('selected');
         firstSelected.classList.add('correct');
@@ -117,7 +145,6 @@ function checkCardMatch() {
             }, 500);
         }
     } else {
-        // Ошибка
         firstSelected.classList.add('wrong');
         secondSelected.classList.add('wrong');
 
