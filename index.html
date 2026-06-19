@@ -4,18 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dis Donc! – Dashboard</title>
-    <link rel="stylesheet" href="style.css">
     <style>
+        :root {
+            --text-main: #1e293b;
+            --main-color: #ff8c1a;
+            --main-gradient: linear-gradient(135deg, #ff8c1a 0%, #ff5722 100%);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(255, 140, 26, 0.3);
+        }
+
+        body.theme-green {
+            --main-color: #2ecc71;
+            --main-gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            --shadow-lg: 0 10px 15px -3px rgba(46, 204, 113, 0.3);
+        }
+
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
-            background-color: #f8fafc;
+            color: var(--text-main);
             
-            /* Детализированный фон: мягкие блики + паттерн из аккуратных точек (Dot Grid) */
+            /* Детализированный фон: Dot Grid + мягкие блики */
+            background-color: #f8fafc;
             background-image: 
                 radial-gradient(circle at 0% 0%, rgba(255, 140, 26, 0.07) 0%, transparent 45%),
                 radial-gradient(circle at 100% 100%, rgba(255, 140, 26, 0.05) 0%, transparent 45%),
@@ -50,13 +66,13 @@
             align-items: center;
             gap: 6px;
             z-index: 1000;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .menu-toggle:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-md);
             border-color: var(--main-color);
         }
 
@@ -69,15 +85,9 @@
             transition: all 0.25s ease;
         }
 
-        .menu-toggle.active span:nth-child(1) {
-            transform: translateY(8px) rotate(45deg);
-        }
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-        .menu-toggle.active span:nth-child(3) {
-            transform: translateY(-8px) rotate(-45deg);
-        }
+        .menu-toggle.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .menu-toggle.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
 
         /* Боковая панель */
         .sidebar {
@@ -98,9 +108,7 @@
             box-sizing: border-box;
         }
 
-        .sidebar.open {
-            right: 0;
-        }
+        .sidebar.open { right: 0; }
 
         .sidebar-header {
             font-size: 22px;
@@ -145,7 +153,6 @@
             background-color: #ffffff;
         }
 
-        /* Подвал меню */
         .sidebar-footer {
             border-top: 1px solid #f1f5f9;
             padding-top: 25px;
@@ -157,7 +164,6 @@
         .dev-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
             background: #fff1f2;
             color: #e11d48;
             padding: 6px 12px;
@@ -180,7 +186,6 @@
             margin-top: 6px;
         }
         
-        /* Главный контейнер */
         .main-content {
             padding: 20px;
             width: 100%;
@@ -201,7 +206,13 @@
             box-sizing: border-box;
         }
 
-        /* Карточки режимов */
+        .subtitle {
+            color: #64748b;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 25px;
+        }
+
         .mode-card {
             display: block;
             text-decoration: none;
@@ -243,7 +254,6 @@
             font-weight: 500;
         }
 
-        /* Затемнение */
         .overlay {
             position: fixed;
             top: 0;
@@ -255,9 +265,7 @@
             z-index: 998;
             display: none;
         }
-        .overlay.active {
-            display: block;
-        }
+        .overlay.active { display: block; }
     </style>
 </head>
 <body class="theme-orange">
@@ -272,9 +280,7 @@
 
     <div class="sidebar" id="sidebarMenu">
         <div class="sidebar-top">
-            <div class="sidebar-header">
-                Dis Donc!
-            </div>
+            <div class="sidebar-header">Dis Donc!</div>
             
             <div class="sidebar-section">
                 <div class="sidebar-title">Lehrbuch</div>
@@ -313,4 +319,52 @@
             <div style="margin-top: 40px;">
                 <a href="quiz.html" class="mode-card">
                     <div class="mode-title">Klassischer Test</div>
-                    <span class
+                    <span class="mode-desc">Trainiere dein Gedächtnis in 3 Stufen: Erkennen (Vorauswahl), Übersetzung verstehen und exakter französischer Rechtschreibtest.</span>
+                </a>
+                
+                <a href="cards.html" class="mode-card">
+                    <div class="mode-title">Paare finden</div>
+                    <span class="mode-desc">Verbinde die passenden Kärtchen spielerisch miteinander. Sucht-Faktor garantiert!</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let currentBook = localStorage.getItem('selectedBook') || '6';
+    let currentUnit = localStorage.getItem('selectedUnit') || 'all';
+
+    document.getElementById('bookSelect').value = currentBook;
+    document.getElementById('unitSelect').value = currentUnit;
+    
+    applyTheme(currentBook);
+
+    function toggleMenu() {
+        document.getElementById('menuBtn').classList.toggle('active');
+        document.getElementById('sidebarMenu').classList.toggle('open');
+        document.getElementById('overlayShadow').classList.toggle('active');
+    }
+
+    function changeBook() {
+        currentBook = document.getElementById('bookSelect').value;
+        localStorage.setItem('selectedBook', currentBook);
+        applyTheme(currentBook);
+    }
+
+    function saveSelection() {
+        currentUnit = document.getElementById('unitSelect').value;
+        localStorage.setItem('selectedUnit', currentUnit);
+    }
+
+    function applyTheme(book) {
+        if(book === '5') {
+            document.body.className = 'theme-green';
+            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 5';
+        } else {
+            document.body.className = 'theme-orange';
+            document.getElementById('welcomeHeader').textContent = 'Dis Donc! 6';
+        }
+    }
+</script>
+</body>
+</html>
