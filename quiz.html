@@ -6,21 +6,30 @@
     <title>Dis Donc! - Quiz</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Локальные переменные темы для плавного изменения интерфейса */
-        :root {
-            --main-color: #ff8c1a;
-            --main-hover: #e07b13;
+        /* Локальные стили для восстановления всех игровых элементов в новом дизайне */
+        #word {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 30px 0;
+            color: var(--text-main);
         }
-        body.theme-green {
-            --main-color: #2ecc71;
-            --main-hover: #27ae60;
+        #result {
+            font-size: 18px;
+            font-weight: 750;
+            margin: 20px 0;
+            min-height: 28px;
         }
-        /* Динамическое окрашивание элементов квиза */
-        .progress-fill { background-color: var(--main-color) !important; }
-        .restart-btn { background-color: var(--main-color) !important; }
-        .restart-btn:hover { background-color: var(--main-hover) !important; }
-        .input-box:focus { border-color: var(--main-color) !important; }
-        .char-btn:hover { background-color: var(--main-color) !important; color: white; }
+        .score-box {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        /* Стилизация инпута в стиле нового дизайна */
+        .input-container {
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -28,16 +37,19 @@
 <div class="container" id="gameContainer">
     <h1>🇫🇷 Dis Donc!</h1>
     <div class="subtitle" id="stageTitle">Teil 1: Multiple Choice</div>
+    
     <div class="progress-text" id="progressText">Frage 1 von 20</div>
     <div class="progress-bar">
         <div class="progress-fill" id="progressFill"></div>
     </div>
+    
     <div id="word"></div>
     <div id="answers"></div>
     <div id="result"></div>
+    
     <div class="score-box" style="display:flex; justify-content:space-between; align-items:center;">
         <span>Punkte: <span id="score">0</span></span>
-        <a class="restart-btn" style="font-size:14px; padding:8px 15px; margin:0;" href="index.html">↩ Menü</a>
+        <a class="restart-btn" style="padding: 10px 20px; font-size: 14px;" href="index.html">↩ Menü</a>
     </div>
 </div>
 
@@ -45,33 +57,33 @@
 <script>
 let current = 0;
 let score = 0;
-let mode = 1; 
+let mode = 1; // 1 = MCQ, 2 = Deutsch, 3 = Französisch
 
-// 1. Извлекаем выбранную книгу и юнит
+// 1. Извлекаем настройки из localStorage
 const chosenBook = localStorage.getItem('selectedBook') || '6';
 const chosenUnit = localStorage.getItem('selectedUnit') || 'all';
 
-// 2. Динамически красим интерфейс квиза в нужный цвет при запуске
+// 2. Включаем нужную тему оформления
 if (chosenBook === '5') {
-    document.body.className = 'theme-green';
+    document.body.classList.add('theme-green');
 }
 
-// 3. Двухуровневая фильтрация массива слов
+// 3. Фильтруем базу слов по книге и юниту
 let activeQuestions = questions.filter(q => q.book == chosenBook);
-
 if (chosenUnit !== 'all') {
     activeQuestions = activeQuestions.filter(q => q.unit == chosenUnit);
 }
 
-// Защитный сброс: если вдруг в юните пусто, загружаем всю книгу
+// Защитный сброс
 if (activeQuestions.length === 0) {
     activeQuestions = questions.filter(q => q.book == chosenBook);
 }
 
+// Перемешиваем и ограничиваем раунд до 20 слов
 const MAX = activeQuestions.length > 20 ? 20 : activeQuestions.length;
 activeQuestions.sort(() => Math.random() - 0.5);
 
-// Старт игры
+// Запуск первой карточки
 loadQuestion();
 
 function updateProgress(){
@@ -90,18 +102,20 @@ function loadQuestion(){
     const de = activeQuestions[current].de;
     const fr = activeQuestions[current].fr;
     
-    const word = (mode === 1 || mode === 3) ? de : fr;
-    const correct = (mode === 1 || mode === 3) ? fr : de;
+    // В зависимости от режима определяем, что показываем, а что спрашиваем
+    const wordToShow = (mode === 1 || mode === 3) ? de : fr;
+    const correctAnswers = (mode === 1 || mode === 3) ? fr : de;
 
-    document.getElementById("word").textContent = word;
-    const answers = document.getElementById("answers");
-    answers.innerHTML = "";
+    document.getElementById("word").textContent = wordToShow;
+    const answersContainer = document.getElementById("answers");
+    answersContainer.innerHTML = "";
 
+    // === РЕЖИМ 1: MULTIPLE CHOICE ===
     if(mode === 1){
-        let options = [correct];
+        let options = [correctAnswers];
         while(options.length < 4 && options.length < activeQuestions.length){
-            let r = activeQuestions[Math.floor(Math.random() * activeQuestions.length)].fr;
-            if(!options.includes(r)) options.push(r);
+            let randWord = activeQuestions[Math.floor(Math.random() * activeQuestions.length)].fr;
+            if(!options.includes(randWord)) options.push(randWord);
         }
         options.sort(() => Math.random() - 0.5);
 
@@ -111,80 +125,39 @@ function loadQuestion(){
             btn.textContent = opt;
             btn.onclick = () => {
                 document.querySelectorAll(".answer-btn").forEach(b => b.disabled = true);
-                if(opt === correct){
+                if(opt === correctAnswers){
                     btn.classList.add("correct");
-                    document.getElementById("result").textContent = "✅ Richtig!";
+                    document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>✅ Richtig!</span>";
                     score++;
                 } else {
                     btn.classList.add("wrong");
                     document.querySelectorAll(".answer-btn").forEach(b => {
-                        if(b.textContent === correct) b.classList.add("correct");
+                        if(b.textContent === correctAnswers) b.classList.add("correct");
                     });
-                    document.getElementById("result").textContent = "❌ Falsch!";
+                    document.getElementById("result").innerHTML = "<span style='color: #e74c3c;'>❌ Falsch!</span>";
                 }
                 document.getElementById("score").textContent = score;
                 current++;
                 setTimeout(()=>{
                     if(current < MAX) loadQuestion();
-                    else showContinue(2); 
+                    else showStageTransition(2); 
                 }, 1200);
             };
-            answers.appendChild(btn);
+            answersContainer.appendChild(btn);
         });
     }
+    // === РЕЖИМЫ 2 и 3: РУЧНОЙ ВВОД ТЕКСТА ===
     else {
+        const inputContainer = document.createElement("div");
+        inputContainer.className = "input-container";
+
         const input = document.createElement("input");
         input.className = "input-box";
+        input.type = "text";
         input.placeholder = mode === 2 ? "Auf Deutsch schreiben..." : "Écrire en français...";
+        inputContainer.appendChild(input);
 
-        const btn = document.createElement("button");
-        btn.className = "answer-btn";
-        btn.textContent = "Prüfen";
-
-        function clean(text, currentMode){
-            if (currentMode === 2) {
-                let cleared = text.replace(/\b(der|die|das)\b/gi, "").replace(/\s+/g," ").trim();
-                if(cleared.length > 0) {
-                    cleared = cleared.charAt(0).toUpperCase() + cleared.slice(1);
-                }
-                return cleared;
-            } else {
-                return text.toLowerCase().trim();
-            }
-        }
-
-        function check(){
-            const user = clean(input.value, mode);
-            const correctClean = clean(correct, mode);
-
-            document.querySelectorAll(".answer-btn").forEach(b => b.disabled = true);
-
-            if(user === correctClean){
-                input.style.border = "2px solid #2ecc71";
-                input.style.boxShadow = "0 0 10px rgba(46, 204, 113, 0.3)";
-                document.getElementById("result").textContent = "✅ Richtig!";
-                score++;
-            } else {
-                input.style.border = "2px solid #e74c3c";
-                input.style.boxShadow = "0 0 10px rgba(231, 76, 60, 0.3)";
-                document.getElementById("result").textContent = "❌ Falsch! Richtig: " + correct;
-            }
-
-            document.getElementById("score").textContent = score;
-            current++;
-
-            setTimeout(()=>{
-                if(current < MAX) loadQuestion();
-                else {
-                    if(mode === 2) showContinue(3); 
-                    else finishQuiz(); 
-                }
-            }, 1200);
-        }
-
-        btn.onclick = check;
-        input.addEventListener("keydown", e => { if(e.key === "Enter") check(); });
-
+        // Если это режим 3 (пишем по-французски) — добавляем панель символов
         if(mode === 3) {
             const keyboardContainer = document.createElement("div");
             keyboardContainer.className = "french-keyboard";
@@ -198,63 +171,109 @@ function loadQuestion(){
                 
                 charBtn.onclick = (e) => {
                     e.preventDefault();
-                    const startPos = input.selectionStart;
-                    const endPos = input.selectionEnd;
-                    const text = input.value;
-                    
-                    input.value = text.substring(0, startPos) + char + text.substring(endPos);
-                    input.selectionStart = input.selectionEnd = startPos + 1;
+                    const start = input.selectionStart;
+                    const end = input.selectionEnd;
+                    input.value = input.value.substring(0, start) + char + input.value.substring(end);
+                    input.selectionStart = input.selectionEnd = start + 1;
                     input.focus();
                 };
                 keyboardContainer.appendChild(charBtn);
             });
-            answers.appendChild(keyboardContainer);
+            answersContainer.appendChild(keyboardContainer);
         }
 
-        answers.appendChild(input);
-        answers.appendChild(btn);
+        const submitBtn = document.createElement("button");
+        submitBtn.className = "restart-btn";
+        submitBtn.style.width = "100%";
+        submitBtn.textContent = "Prüfen";
+
+        // Функция нормализации текста (умная проверка без учета артиклей и регистра)
+        function cleanText(text, currentMode){
+            if (currentMode === 2) {
+                let cleared = text.replace(/\b(der|die|das)\b/gi, "").replace(/\s+/g," ").trim();
+                if(cleared.length > 0) cleared = cleared.charAt(0).toUpperCase() + cleared.slice(1);
+                return cleared;
+            } else {
+                return text.toLowerCase().trim();
+            }
+        }
+
+        function checkInputResult(){
+            const userAns = cleanText(input.value, mode);
+            const correctAns = cleanText(correctAnswers, mode);
+
+            submitBtn.disabled = true;
+            input.disabled = true;
+
+            if(userAns === correctAns){
+                input.classList.add("correct");
+                document.getElementById("result").innerHTML = "<span style='color: #2ecc71;'>✅ Richtig!</span>";
+                score++;
+            } else {
+                input.classList.add("wrong");
+                document.getElementById("result").innerHTML = `<span style='color: #e74c3c;'>❌ Falsch! Richtig: <b>${correctAnswers}</b></span>`;
+            }
+
+            document.getElementById("score").textContent = score;
+            current++;
+
+            setTimeout(()=>{
+                if(current < MAX) loadQuestion();
+                else {
+                    if(mode === 2) showStageTransition(3); 
+                    else showFinalResults(); 
+                }
+            }, 2000);
+        }
+
+        submitBtn.onclick = checkInputResult;
+        input.addEventListener("keydown", e => { if(e.key === "Enter") checkInputResult(); });
+
+        answersContainer.appendChild(inputContainer);
+        answersContainer.appendChild(submitBtn);
         input.focus();
     }
 }
 
-function showContinue(nextMode){
+// Экран перехода между уровнями сложности
+function showStageTransition(nextMode){
     let title = "";
     let subtitle = "";
-    let btnClick = "";
+    let handlerName = "";
 
     if(nextMode === 2) {
-        title = "🔥 Teil 1 fertig!";
-        subtitle = "Jetzt kommt Teil 2 (Eingabe auf Deutsch)";
-        btnClick = "startStage2()";
+        title = "🔥 Teil 1 geschafft!";
+        subtitle = "Bereit für Teil 2? (Eingabe auf Deutsch)";
+        handlerName = "startStage2()";
     } else if(nextMode === 3) {
-        title = "🔥 Teil 2 fertig!";
-        subtitle = "Jetzt kommt Teil 3 (Eingabe auf Französisch)";
-        btnClick = "startStage3()";
+        title = "🚀 Teil 2 geschafft!";
+        subtitle = "Bereit für das Finale? (Eingabe auf Französisch)";
+        handlerName = "startStage3()";
     }
 
     document.getElementById("gameContainer").innerHTML = `
         <h1>${title}</h1>
-        <p>${subtitle}</p>
-        <button class="restart-btn" onclick="${btnClick}">Weiter ▶</button>
+        <p class="subtitle">${subtitle}</p>
+        <button class="restart-btn" onclick="${handlerName}">Weitergehen ▶</button>
     `;
 }
 
 function startStage2(){
     current = 0; mode = 2;
-    setupStageHeader("Teil 2: Eingabe auf Deutsch");
+    rebuildQuizLayout("Teil 2: Deutsch-Eingabe");
     loadQuestion();
 }
 
 function startStage3(){
     current = 0; mode = 3;
-    setupStageHeader("Teil 3: Eingabe auf Französisch");
+    rebuildQuizLayout("Teil 3: Französisch-Schreibtest");
     loadQuestion();
 }
 
-function setupStageHeader(titleString) {
+function rebuildQuizLayout(titleText) {
     document.getElementById("gameContainer").innerHTML = `
         <h1>🇫🇷 Dis Donc!</h1>
-        <div class="subtitle">${titleString}</div>
+        <div class="subtitle" id="stageTitle">${titleText}</div>
         <div class="progress-text" id="progressText"></div>
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
         <div id="word"></div>
@@ -262,24 +281,27 @@ function setupStageHeader(titleString) {
         <div id="result"></div>
         <div class="score-box" style="display:flex; justify-content:space-between; align-items:center;">
             <span>Punkte: <span id="score">${score}</span></span>
-            <a class="restart-btn" style="font-size:14px; padding:8px 15px; margin:0;" href="index.html">↩ Menü</a>
+            <a class="restart-btn" style="padding: 10px 20px; font-size: 14px;" href="index.html">↩ Menü</a>
         </div>
     `;
 }
 
-function finishQuiz(){
-    const totalPossiblePoints = MAX * 3;
-    const percent = Math.round((score / totalPossiblePoints) * 100);
-    let msg = percent >= 90 ? "🏆 Fantastisch!" : percent >= 70 ? "🥈 Sehr gut!" : percent >= 50 ? "👍 Gut!" : "📚 Weiter üben!";
+// Финальные результаты игры
+function showFinalResults(){
+    const totalPoints = MAX * 3;
+    const percent = Math.round((score / totalPoints) * 100);
+    let feedback = percent >= 90 ? "🏆 Absoluter Experte!" : percent >= 70 ? "🥈 Großartige Leistung!" : percent >= 50 ? "👍 Gut gemacht!" : "📚 Übung macht den Meister!";
 
     document.getElementById("gameContainer").innerHTML = `
-        <h1>🎉 Fertig!</h1>
-        <h2>${msg}</h2>
-        <h1>${score}/${totalPossiblePoints}</h1>
-        <p>${percent}% richtig</p>
-        <div style="display:flex; gap:10px; justify-content:center;">
-            <button class="restart-btn" onclick="location.reload()">Neu starten 🔄</button>
-            <a class="restart-btn" style="background:#666;" href="index.html">Hauptmenü 🏠</a>
+        <h1>🎉 Training beendet!</h1>
+        <h2 style="color: var(--text-main); margin-bottom:10px;">${feedback}</h2>
+        <div style="font-size: 48px; font-weight: 900; background: var(--main-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 20px 0;">
+            ${score} / ${totalPoints}
+        </div>
+        <p class="subtitle">${percent}% aller Antworten waren korrekt.</p>
+        <div style="display:flex; gap:15px; justify-content:center; margin-top: 30px;">
+            <button class="restart-btn" onclick="location.reload()">Nochmal 🔄</button>
+            <a class="restart-btn" style="background: linear-gradient(135deg, #718096 0%, #4a5568 100%);" href="index.html">Hauptmenü 🏠</a>
         </div>
     `;
 }
